@@ -1,0 +1,12 @@
+{
+  "appId": "com.votan.sochotdon",
+  "appName": "So Chot Don",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#050505"
+  }
+}
