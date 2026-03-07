@@ -1,6 +1,6 @@
 {
   "appId": "com.votan.sochotdon",
-  "appName": "So Chot Don",
+  "appName": "Sổ Chốt Đơn",
   "webDir": "www",
   "server": {
     "androidScheme": "https"
