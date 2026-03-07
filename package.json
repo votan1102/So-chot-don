@@ -1,0 +1,14 @@
+{
+  "name": "so-chot-don",
+  "version": "1.0.0",
+  "description": "So Chot Don - Vo Tan",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}
