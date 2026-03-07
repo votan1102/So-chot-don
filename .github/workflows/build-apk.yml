@@ -33,34 +33,19 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
+      # ── THAY THẾ MAINACTIVITY ĐỂ FIX LƯU ẢNH VÀO GALLERY ──
       - name: Patch MainActivity for image saving
         run: |
           cp android-src/MainActivity.java \
             android/app/src/main/java/com/votan/sochotdon/MainActivity.java
 
-      - name: Add image permissions to AndroidManifest
+      # ── THÊM QUYỀN GHI ẢNH VÀO ANDROIDMANIFEST ──
+      - name: Add WRITE_EXTERNAL_STORAGE permission
         run: |
-          sed -i 's|<uses-permission android:name="android.permission.INTERNET" />|<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />|' \
+          sed -i 's|<uses-permission android:name="android.permission.INTERNET" />|<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />|' \
             android/app/src/main/AndroidManifest.xml
 
-      - name: Embed html2canvas locally
-        run: |
-          curl -s https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js \
-            -o /tmp/html2canvas.min.js
-          python3 - << PYEOF
-          import re
-          with open('www/index.html', 'r') as f:
-              html = f.read()
-          cdn_tag = '<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>'
-          with open('/tmp/html2canvas.min.js', 'r') as f:
-              h2c = f.read()
-          inline_tag = '<script>' + h2c + '</script>'
-          html = html.replace(cdn_tag, inline_tag)
-          with open('www/index.html', 'w') as f:
-              f.write(html)
-          print('html2canvas embedded OK, size:', len(html))
-          PYEOF
-
+      # ── THAY THẾ ICON BẰNG LOGO CỦA BẠN ──
       - name: Replace app icons with custom logo
         run: |
           for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
@@ -81,4 +66,4 @@ jobs:
         with:
           name: So-Chot-Don-APK-v1
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30 
+          retention-days: 30
