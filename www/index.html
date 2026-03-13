@@ -79,7 +79,6 @@
         /* NÚT LƯU ẢNH */
         .btn-save-img { flex: 1.5; height: 45px; background: var(--gold-gradient); color: #000; border-radius: 12px; font-weight: 900; border: none; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
-
         /* LOADING */
         #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
         .loading-spinner { width: 50px; height: 50px; border: 3px solid #222; border-top-color: var(--gold-main); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -89,8 +88,10 @@
         #notifyBox { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--gold-gradient); color: #000; padding: 10px 20px; border-radius: 30px; font-weight: 900; display: none; z-index: 9999; font-size: 0.75rem; white-space: nowrap; }
         .editable { cursor: pointer; }
 
-        /* CAPTURE TARGET ẨN */
-        #captureTarget { position: fixed; top: -9999px; left: -9999px; z-index: -1; background: #050505; display: none; }
+        /* ===== FIX: CAPTURE TARGET - dùng opacity thay vì top:-9999px ===== */
+        /* top:-9999px khiến Android WebView không render đủ các cột hàng hoá */
+        #captureTarget { position: fixed; top: 0; left: 0; opacity: 0; pointer-events: none; z-index: -1; background: #050505; display: none; }
+
         #captureTarget table { border-collapse: separate; border-spacing: 0; border: 1px solid rgba(212,175,55,0.5); }
         #captureTarget th, #captureTarget td { border: 0.8px solid rgba(212,175,55,0.25); padding: 10px 8px; text-align: center; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         #captureTarget .cap-header-wrap { background: #000; padding: 18px 20px 14px; text-align: center; border-bottom: 1.5px solid #d4af37; }
@@ -352,7 +353,6 @@
         }
         function resetHangModal() { document.getElementById('hangTitle').innerText = "THÊM HÀNG MỚI"; document.getElementById('inPName').value = ""; document.getElementById('inPPrice').value = ""; document.getElementById('btnHangConfirm').onclick = confirmAddP; }
 
-
         function enterCleanMode() {
             const tableClone = document.getElementById('orderTable').cloneNode(true);
             tableClone.querySelectorAll('input').forEach(i => {
@@ -377,11 +377,11 @@
             }, 100);
         }
 
-
         function exitCleanMode() { document.getElementById('cleanOverlay').style.display = 'none'; }
 
         // ==========================================
-        // TÍNH NĂNG MỚI: LƯU ĐƠN HÀNG THÀNH ẢNH
+        // TÍNH NĂNG LƯU ĐƠN HÀNG THÀNH ẢNH
+        // FIX: Tất cả style dùng inline để Android WebView render đầy đủ
         // ==========================================
         function buildCaptureHTML() {
             const now = new Date();
@@ -403,23 +403,37 @@
                 </div>
                 <table><thead><tr>
                     <th class="cap-name-col">KHÁCH HÀNG</th>`;
+
+            // FIX: thêm inline style đầy đủ cho cột hàng hoá, không chỉ dựa vào CSS class
             appState.products.forEach(p => {
-                html += `<th>${p.name}<br><span style="font-size:8px;opacity:0.6;font-weight:500;">${p.price.toLocaleString()}</span></th>`;
+                html += `<th style="background:#000!important;color:#ffffff;font-weight:900;font-size:10px;padding:8px 8px;text-align:center;border:0.8px solid rgba(212,175,55,0.25);">${p.name}<br><span style="font-size:8px;opacity:0.6;font-weight:500;">${p.price.toLocaleString()}</span></th>`;
             });
+
             html += `<th class="cap-total-col">TỔNG</th></tr></thead><tbody>`;
 
             appState.customers.forEach((c, ci) => {
-                html += `<tr class="${c.paid?'cap-paid-row':''}">
-                    <td class="cap-name-col">${c.name}${c.paid?' ✓':''}</td>`;
+                const isPaid = c.paid;
+                const rowBg = isPaid ? 'background:rgba(16,185,129,0.1)!important;' : '';
+                html += `<tr class="${isPaid?'cap-paid-row':''}">
+                    <td class="cap-name-col" style="${isPaid?'color:#10b981!important;':''}">${c.name}${isPaid?' ✓':''}</td>`;
+
+                // FIX: thêm inline style đầy đủ cho từng ô số lượng hàng hoá
                 appState.products.forEach((p, pi) => {
                     const q = c.qtys[pi]||0;
-                    html += q > 0 ? `<td class="cap-qty-cell">${q}</td>` : `<td class="cap-zero-cell">—</td>`;
+                    if (q > 0) {
+                        html += `<td style="font-size:12px;font-weight:700;color:#3b82f6;text-align:center;padding:8px 6px;border:0.8px solid rgba(212,175,55,0.25);${rowBg}">${q}</td>`;
+                    } else {
+                        html += `<td style="color:#333;font-size:11px;text-align:center;padding:8px 6px;border:0.8px solid rgba(212,175,55,0.25);${rowBg}">—</td>`;
+                    }
                 });
-                html += `<td class="cap-total-col">${rowTotals[ci].toLocaleString()}</td></tr>`;
+
+                html += `<td class="cap-total-col" style="${isPaid?'background:#10b981!important;color:#000!important;':''}">${rowTotals[ci].toLocaleString()}</td></tr>`;
             });
 
             html += `</tbody><tfoot><tr><td class="cap-name-col">TỔNG CỘNG</td>`;
-            colSums.forEach(s => { html += `<td style="color:#d4af37;font-weight:900;font-size:13px;">${s.toLocaleString()}</td>`; });
+            colSums.forEach(s => {
+                html += `<td style="color:#d4af37;font-weight:900;font-size:13px;text-align:center;padding:8px 6px;background:#0a0a0a!important;border:0.8px solid rgba(212,175,55,0.25);">${s.toLocaleString()}</td>`;
+            });
             html += `<td class="cap-total-col" style="color:#d4af37;">${grandTotal.toLocaleString()}</td>
                 </tr></tfoot></table>
                 <div class="cap-footer-bar">VÕ TẤN PRECISION · SỔ CHỐT ĐƠN</div>
