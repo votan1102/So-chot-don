@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Sổ Chốt Đơn - Võ Tấn Precision</title>
+    <title>Đơn Hàng - Võ Tấn</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
@@ -33,7 +33,7 @@
         .btn-main { flex: 1; height: 45px; background: var(--gold-gradient); color: #000; border: none; border-radius: 12px; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; cursor: pointer; }
         .action-row { display: flex; gap: 8px; margin-bottom: 0; }
         .btn-capture-main { flex: 2; height: 38px; background: #111; border: 1.5px solid var(--gold-main); border-radius: 10px; color: var(--gold-main); font-weight: 700; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; text-transform: uppercase; }
-        .btn-reset-main { flex: 1; height: 38px; background: #0a0a0a; border: 1.5px solid #331111; border-radius: 10px; color: #555; font-weight: 700; font-size: 0.68rem; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; text-transform: uppercase; }
+        .btn-reset-main { flex: 1; height: 38px; background: #111; border: 1.5px solid #cc2222; border-radius: 10px; color: #aaaaaa; font-weight: 700; font-size: 0.68rem; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; text-transform: uppercase; }
         .table-container { background: var(--surface); overflow: auto; flex-grow: 1; border-top: var(--grid-line); -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
         table { width: 100%; border-collapse: separate; border-spacing: 0; }
         th, td { border-bottom: var(--grid-line); border-right: var(--grid-line); padding: 10px 4px; text-align: center; }
@@ -88,8 +88,6 @@
         #notifyBox { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--gold-gradient); color: #000; padding: 10px 20px; border-radius: 30px; font-weight: 900; display: none; z-index: 9999; font-size: 0.75rem; white-space: nowrap; }
         .editable { cursor: pointer; }
 
-        /* ===== FIX: CAPTURE TARGET - dùng opacity thay vì top:-9999px ===== */
-        /* top:-9999px khiến Android WebView không render đủ các cột hàng hoá */
         #captureTarget { position: fixed; top: 0; left: 0; opacity: 0; pointer-events: none; z-index: -1; background: #050505; display: none; }
 
         #captureTarget table { border-collapse: separate; border-spacing: 0; border: 1px solid rgba(212,175,55,0.5); }
@@ -126,8 +124,8 @@
     <div class="app-container" id="mainApp">
         <div class="streak"></div>
         <div class="header">
-            <h2 class="header-title">SỔ CHỐT ĐƠN</h2>
-            <div class="made-by">— MADE BY VÕ TẤN —</div>
+            <h2 class="header-title">ĐƠN HÀNG</h2>
+            <div class="made-by">— ANH TẤN —</div>
         </div>
         <div class="control-panel">
             <div class="action-row">
@@ -157,7 +155,7 @@
     <!-- CLEAN MODE -->
     <div id="cleanOverlay">
         <div class="clean-header">
-            <div style="color:var(--gold-main);font-weight:900;font-size:1rem;letter-spacing:4px;text-transform:uppercase;">ĐƠN HÀNG - VÕ TẤN</div>
+            <div style="color:var(--gold-main);font-weight:900;font-size:1rem;letter-spacing:4px;text-transform:uppercase;">ĐƠN HÀNG - ANH TẤN</div>
         </div>
         <div class="clean-content" id="cleanContentArea">
             <div id="cleanWrapper"><div id="cleanView"></div></div>
@@ -215,6 +213,16 @@
             if (diff > 0 && sc && sc.scrollTop <= 0) e.preventDefault();
         }, { passive: false });
 
+        // FIX: Tap ra ngoài input → blur ngay, đóng bàn phím
+        document.addEventListener('touchstart', e => {
+            const active = document.activeElement;
+            if (active && active.tagName === 'INPUT' && active.closest('.table-container')) {
+                if (!e.target.closest('.table-container input')) {
+                    active.blur();
+                }
+            }
+        }, { passive: true });
+
         const STORAGE_KEY = 'VoTan_Precision_Master_12_6';
         let appState = { products: [{name:"HÀNG A",price:1000},{name:"HÀNG B",price:2000}], customers: [{name:"KHÁCH 01",qtys:[0,0],paid:false}] };
         let lastTap = 0, editTarget = {type:null,index:null}, targetPayIndex = null;
@@ -245,6 +253,12 @@
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) { try { appState = JSON.parse(saved); } catch(e) {} }
             render();
+            // FIX: Blur mọi element đang focus khi khởi động, tránh bàn phím tự hiện
+            setTimeout(() => {
+                if (document.activeElement && document.activeElement !== document.body) {
+                    document.activeElement.blur();
+                }
+            }, 150);
         }
         function sync() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); }
 
@@ -261,7 +275,8 @@
                 let rC = `<tr class="${c.paid?'row-paid':''}"><td class="sticky-col editable" onclick="detectDoubleTap(event,'customer',${ci})">${c.name}</td>`;
                 appState.products.forEach((p, pi) => {
                     const q = c.qtys[pi] || 0;
-                    rC += `<td><input type="text" class="${q>0?'has-data':''}" data-ci="${ci}" data-pi="${pi}" inputmode="decimal" value="${q}" oninput="updateQty(this)" onclick="this.select()"></td>`;
+                    // FIX: thêm onkeydown để blur (đóng bàn phím) khi nhấn Enter/Done
+                    rC += `<td><input type="text" class="${q>0?'has-data':''}" data-ci="${ci}" data-pi="${pi}" inputmode="decimal" value="${q}" oninput="updateQty(this)" onkeydown="if(event.key==='Enter'||event.keyCode===13){this.blur();return false;}" onclick="this.select()"></td>`;
                 });
                 rC += `<td class="total-cell" id="t-r-${ci}" onclick="initiatePay(${ci})">0</td></tr>`;
                 bM += rC;
@@ -379,10 +394,6 @@
 
         function exitCleanMode() { document.getElementById('cleanOverlay').style.display = 'none'; }
 
-        // ==========================================
-        // TÍNH NĂNG LƯU ĐƠN HÀNG THÀNH ẢNH
-        // FIX: Tất cả style dùng inline để Android WebView render đầy đủ
-        // ==========================================
         function buildCaptureHTML() {
             const now = new Date();
             const dateStr = now.toLocaleDateString('vi-VN', {weekday:'long', year:'numeric', month:'2-digit', day:'2-digit'});
@@ -397,14 +408,13 @@
 
             let html = `<div style="background:#050505;display:inline-block;">
                 <div class="cap-header-wrap">
-                    <div class="cap-title">SỔ CHỐT ĐƠN</div>
-                    <div class="cap-subtitle">— MADE BY VÕ TẤN —</div>
+                    <div class="cap-title">ĐƠN HÀNG</div>
+                    <div class="cap-subtitle">— ANH TẤN —</div>
                     <div class="cap-date">${dateStr} · ${timeStr}</div>
                 </div>
                 <table><thead><tr>
                     <th class="cap-name-col">KHÁCH HÀNG</th>`;
 
-            // FIX: thêm inline style đầy đủ cho cột hàng hoá, không chỉ dựa vào CSS class
             appState.products.forEach(p => {
                 html += `<th style="background:#000!important;color:#ffffff;font-weight:900;font-size:10px;padding:8px 8px;text-align:center;border:0.8px solid rgba(212,175,55,0.25);">${p.name}<br><span style="font-size:8px;opacity:0.6;font-weight:500;">${p.price.toLocaleString()}</span></th>`;
             });
@@ -417,7 +427,6 @@
                 html += `<tr class="${isPaid?'cap-paid-row':''}">
                     <td class="cap-name-col" style="${isPaid?'color:#10b981!important;':''}">${c.name}${isPaid?' ✓':''}</td>`;
 
-                // FIX: thêm inline style đầy đủ cho từng ô số lượng hàng hoá
                 appState.products.forEach((p, pi) => {
                     const q = c.qtys[pi]||0;
                     if (q > 0) {
@@ -436,7 +445,7 @@
             });
             html += `<td class="cap-total-col" style="color:#d4af37;">${grandTotal.toLocaleString()}</td>
                 </tr></tfoot></table>
-                <div class="cap-footer-bar">VÕ TẤN PRECISION · SỔ CHỐT ĐƠN</div>
+                <div class="cap-footer-bar">ANH TẤN · ĐƠN HÀNG</div>
             </div>`;
             return html;
         }
@@ -469,7 +478,6 @@
 
                     const base64 = canvas.toDataURL('image/png');
 
-                    // ANDROID WEBVIEW: Gọi bridge Java để lưu ảnh vào Gallery
                     if (window.AndroidSaveImage) {
                         try {
                             window.AndroidSaveImage.saveBase64Image(base64, fn);
@@ -480,7 +488,6 @@
                         return;
                     }
 
-                    // TRÌNH DUYỆT THƯỜNG: download link
                     canvas.toBlob(blob => {
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');
@@ -510,3 +517,4 @@
     </script>
 </body>
 </html>
+rm
