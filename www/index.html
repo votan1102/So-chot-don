@@ -6,6 +6,8 @@
     <title>Đơn Hàng - Võ Tấn</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-deep: #050505;
@@ -37,14 +39,16 @@
         .table-container { background: var(--surface); overflow: auto; flex-grow: 1; border-top: var(--grid-line); -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
         table { width: 100%; border-collapse: separate; border-spacing: 0; }
         th, td { border-bottom: var(--grid-line); border-right: var(--grid-line); padding: 10px 4px; text-align: center; }
-        thead th { position: sticky; top: 0; z-index: 1000; background-color: #000 !important; color: #ffffff; font-weight: 900; font-size: 0.65rem; }
+        thead th { position: sticky; top: 0; z-index: 1000; background-color: #000 !important; color: #ffffff; font-weight: 900; font-size: 0.65rem; white-space: nowrap; }
         thead th.sticky-col, thead th.total-cell { font-size: 0.8rem !important; font-weight: 900 !important; letter-spacing: 1px; background-color: #000 !important; color: var(--gold-main) !important; }
 
         /* ── ĐÃ SỬA: sticky-col 80px, total-cell 60px ── */
-        .sticky-col { position: sticky; left: 0; z-index: 1500; background-color: #080808 !important; color: #fff; font-weight: 500; min-width: 80px; text-align: left; padding-left: 10px; font-size: var(--unified-font); border-right: var(--grid-line) !important; }
+        .sticky-col { position: sticky; left: 0; z-index: 1500; background-color: #080808 !important; color: #fff; font-weight: 500; width: 100px; min-width: 100px; max-width: 100px; text-align: left; padding-left: 10px; font-size: var(--unified-font); border-right: var(--grid-line) !important; white-space: nowrap; overflow: hidden; }
+        td.sticky-col { text-align: left !important; padding-left: 8px !important; font-family: 'Open Sans', sans-serif !important; }
+        tfoot td.sticky-col { text-align: center !important; padding-left: 0 !important; }
         .total-cell { position: sticky; right: 0; z-index: 1500; background-color: #0c0c0c !important; color: var(--danger); font-weight: 800; font-size: 13px; min-width: 60px; border-left: var(--grid-line) !important; }
 
-        thead th.sticky-col { z-index: 2500 !important; top: 0; left: 0; }
+        thead th.sticky-col { z-index: 2500 !important; top: 0; left: 0; text-align: center !important; padding-left: 0 !important; }
         thead th.total-cell { z-index: 2500 !important; top: 0; right: 0; }
         .table-container input { width: 35px; height: 35px; border: 1px solid transparent; border-radius: 50%; font-size: var(--unified-font); font-weight: 700; color: #555; background: transparent; text-align: center; }
         .table-container input.has-data { color: var(--active-blue) !important; border-color: var(--gold-main) !important; }
@@ -228,15 +232,35 @@
             try {
                 const AC = window.AudioContext || window.webkitAudioContext;
                 if (!AC) return;
-                const ctx = new AC(), osc = ctx.createOscillator(), gain = ctx.createGain();
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(1200, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(2200, ctx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0, ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.02);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.5);
+                const ctx = new AC();
+
+                // Âm chính ~1050Hz - tiếng DING của chuông đồng nhà hàng
+                const osc1 = ctx.createOscillator(), gain1 = ctx.createGain();
+                osc1.connect(gain1); gain1.connect(ctx.destination);
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(1050, ctx.currentTime);
+                gain1.gain.setValueAtTime(0.7, ctx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.2);
+                osc1.start(ctx.currentTime); osc1.stop(ctx.currentTime + 2.2);
+
+                // Hoà âm 2 ~2100Hz - lớp giữa tạo độ sáng
+                const osc2 = ctx.createOscillator(), gain2 = ctx.createGain();
+                osc2.connect(gain2); gain2.connect(ctx.destination);
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(2100, ctx.currentTime);
+                gain2.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+                osc2.start(ctx.currentTime); osc2.stop(ctx.currentTime + 1.0);
+
+                // Hoà âm 3 ~3180Hz (inharmonic partial - đặc trưng chuông kim loại)
+                const osc3 = ctx.createOscillator(), gain3 = ctx.createGain();
+                osc3.connect(gain3); gain3.connect(ctx.destination);
+                osc3.type = 'sine';
+                osc3.frequency.setValueAtTime(3180, ctx.currentTime);
+                gain3.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                osc3.start(ctx.currentTime); osc3.stop(ctx.currentTime + 0.4);
+
             } catch(e) {}
         }
 
@@ -260,7 +284,7 @@
 
         function render() {
             const h = document.getElementById('headerRow'), b = document.getElementById('bodyRows'), f = document.getElementById('footerTotal');
-            let hM = `<th class="sticky-col">KHÁCH HÀNG</th>`;
+            let hM = `<th class="sticky-col">TÊN KHÁCH</th>`;
             appState.products.forEach((p, pi) => {
                 hM += `<th class="editable" onclick="detectDoubleTap(event,'product',${pi})">${p.name}<br><span style="font-size:9.5px;opacity:0.6;font-weight:500;">${p.price.toLocaleString()}</span></th>`;
             });
@@ -281,12 +305,25 @@
             let fM = `<tr class="grand-total-row"><td class="sticky-col">TỔNG</td>`;
             appState.products.forEach((p, pi) => { fM += `<td class="col-sum-val" id="c-s-${pi}">0</td>`; });
             fM += `<td class="grand-total-val" id="g-t">0</td></tr>`;
-            f.innerHTML = fM; calc();
+            f.innerHTML = fM; calc(); setTimeout(fitText, 50);
         }
 
         function updateQty(i) {
             const ci = parseInt(i.dataset.ci), pi = parseInt(i.dataset.pi), q = parseFloat(i.value) || 0;
             appState.customers[ci].qtys[pi] = q; i.classList.toggle('has-data', q > 0); sync(); calc();
+        }
+
+        function fitText() {
+            document.querySelectorAll('.sticky-col').forEach(cell => {
+                cell.style.fontSize = '';
+                const defaultFs = cell.closest('thead') ? 12.8 : cell.closest('tfoot') ? 12 : 13;
+                let fs = defaultFs;
+                cell.style.fontSize = fs + 'px';
+                while (cell.scrollWidth > cell.clientWidth + 1 && fs > 7) {
+                    fs -= 0.5;
+                    cell.style.fontSize = fs + 'px';
+                }
+            });
         }
 
         function calc() {
@@ -420,7 +457,7 @@
                 const isPaid = c.paid;
                 const rowBg = isPaid ? 'background:rgba(16,185,129,0.1)!important;' : '';
                 html += `<tr class="${isPaid?'cap-paid-row':''}">
-                    <td class="cap-name-col" style="${isPaid?'color:#10b981!important;':''}">${c.name}${isPaid?' ✓':''}</td>`;
+                    <td class="cap-name-col" style="${isPaid?'color:#10b981!important;':''}">${c.name}</td>`;
 
                 appState.products.forEach((p, pi) => {
                     const q = c.qtys[pi]||0;
