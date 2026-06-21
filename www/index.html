@@ -1,150 +1,194 @@
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Đơn Hàng - Võ Tấn</title>
+    <title>Đơn Hàng - Anh Tấn</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-deep: #050505;
-            --surface: rgba(15, 15, 15, 0.98);
-            --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
-            --gold-main: #d4af37; 
-            --text-bright: #ffffff;
-            --active-blue: #3b82f6; 
-            --danger: #ff4d4d;
-            --paid-green: #10b981;
-            --paid-bg: rgba(16, 185, 129, 0.15);
-            --grid-line: 0.8px solid rgba(212, 175, 55, 0.35); 
-            --unified-font: 13px; 
+            --bg-main: #f4f6f8;
+            --surface: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --border-light: #dfe6e9;
+            --border-strong: #b2bec3;
+            --primary: #0984e3;
+            --primary-light: #e3f2fd;
+            --danger: #d63031;
+            --danger-light: #ff7675;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --warning-light: #ffeaa7;
+            --unified-font: 13.5px;
         }
+        
         html, body { overscroll-behavior: none !important; overscroll-behavior-y: none !important; height: 100%; width: 100%; position: fixed; overflow: hidden; }
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-deep); color: var(--text-bright); }
-        .streak { position: fixed; width: 140vw; height: 450px; background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, rgba(0, 0, 0, 0) 75%); transform: rotate(-30deg); z-index: 0; pointer-events: none; filter: blur(85px); }
-        .app-container { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; z-index: 1; }
-        .header { text-align: center; padding: 20px 10px 10px 10px; border-bottom: var(--grid-line); background: #000; flex-shrink: 0; }
-        .header-title { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; color: var(--gold-main); letter-spacing: 4px; }
-        .made-by { font-size: 0.6rem; color: var(--gold-main); letter-spacing: 5px; text-transform: uppercase; font-weight: 900; margin-top: 5px; opacity: 0.6; }
-        .control-panel { position: relative; z-index: 3000; width: 100%; max-width: 500px; margin: 10px auto; padding: 0 10px; flex-shrink: 0; }
-        .primary-row { display: flex; gap: 8px; margin-top: 8px; }
-        .btn-main { flex: 1; height: 45px; background: var(--gold-gradient); color: #000; border: none; border-radius: 12px; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; cursor: pointer; }
-        .action-row { display: flex; gap: 8px; margin-bottom: 0; }
-        .btn-capture-main { flex: 2; height: 38px; background: #111; border: 1.5px solid var(--gold-main); border-radius: 10px; color: var(--gold-main); font-weight: 700; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; text-transform: uppercase; }
-        .btn-reset-main { flex: 1; height: 38px; background: #111; border: 1.5px solid #cc2222; border-radius: 10px; color: #aaaaaa; font-weight: 700; font-size: 0.68rem; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; text-transform: uppercase; }
-        .table-container { background: var(--surface); overflow: auto; flex-grow: 1; border-top: var(--grid-line); -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); }
+        
+        .app-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
+        
+        /* HEADER & TABS */
+        .top-section { background: var(--surface); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 3000; flex-shrink: 0; }
+        .header { text-align: center; padding: 15px 10px 5px; }
+        .header-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); letter-spacing: 2px; text-transform: uppercase; }
+        .made-by { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
+        
+        .tabs-container { display: flex; overflow-x: auto; padding: 10px 10px; gap: 8px; border-bottom: 1px solid var(--border-light); scrollbar-width: none; }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        .tab-btn { padding: 8px 16px; border-radius: 20px; background: var(--bg-main); color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border-light); cursor: pointer; white-space: nowrap; transition: all 0.2s; user-select: none; }
+        .tab-btn.active { background: var(--text-main); color: var(--surface); border-color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab-add { padding: 8px 12px; border-radius: 20px; background: var(--primary-light); color: var(--primary); font-size: 0.8rem; font-weight: 700; border: 1px dashed var(--primary); cursor: pointer; white-space: nowrap; user-select: none;}
+
+        /* CONTROL PANEL */
+        .control-panel { padding: 10px; flex-shrink: 0; background: var(--bg-main); z-index: 2900;}
+        .action-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .btn-tool { flex: 1; height: 38px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px; color: var(--text-main); font-weight: 700; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .btn-tool:active { background: var(--bg-main); }
+        .btn-tool.disabled { opacity: 0.5; pointer-events: none; }
+        
+        .primary-row { display: flex; gap: 8px; }
+        .btn-main { flex: 1; height: 45px; background: var(--text-main); color: var(--surface); border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: transform 0.1s; }
+        .btn-main:active { transform: scale(0.98); }
+
+        /* TABLE */
+        .table-container { background: var(--surface); overflow: auto; flex-grow: 1; border-top: 1px solid var(--border-strong); -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        th, td { border-bottom: var(--grid-line); border-right: var(--grid-line); padding: 10px 4px; text-align: center; }
-        thead th { position: sticky; top: 0; z-index: 1000; background-color: #000 !important; color: #ffffff; font-weight: 900; font-size: 0.65rem; white-space: nowrap; }
-        thead th.sticky-col, thead th.total-cell { font-size: 0.8rem !important; font-weight: 900 !important; letter-spacing: 1px; background-color: #000 !important; color: var(--gold-main) !important; }
+        th, td { border-bottom: 1px solid var(--border-light); border-right: 1px solid var(--border-light); padding: 10px 4px; text-align: center; }
+        
+        thead th { position: sticky; top: 0; z-index: 1000; background-color: #f8f9fa !important; color: var(--text-main); font-weight: 700; font-size: 0.7rem; border-bottom: 2px solid var(--border-strong); vertical-align: bottom;}
+        
+        /* CỘT TÊN KHÁCH */
+        .sticky-col { position: sticky; left: 0; z-index: 1500; background-color: var(--surface) !important; width: 125px; min-width: 125px; max-width: 125px; text-align: left; padding-left: 10px; font-size: var(--unified-font); border-right: 1px solid var(--border-strong) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 3px 0 8px rgba(0,0,0,0.06); clip-path: inset(0 -15px 0 0); }
+        td.sticky-col { text-align: left !important; padding-left: 8px !important; font-weight: 700 !important; font-size: 12.5px !important; color: var(--text-main) !important;}
+        tfoot td.sticky-col { text-align: center !important; padding-left: 0 !important; font-weight: 800 !important; font-size: 0.8rem !important;}
+        
+        /* CỘT TỔNG */
+        .total-cell { position: sticky; right: 0; z-index: 1500; background-color: #fafbfa !important; color: var(--danger); font-weight: 800; font-size: 13.5px; min-width: 70px; border-left: 1px solid var(--border-strong) !important; cursor: pointer; transition: background 0.2s; box-shadow: -3px 0 8px rgba(0,0,0,0.06); clip-path: inset(0 0 0 -15px);}
+        
+        thead th.sticky-col, thead th.total-cell { z-index: 2500 !important; top: 0; }
+        thead th.sticky-col { left: 0; text-align: center !important; padding-left: 0 !important; font-weight: 800 !important; font-size: 11px !important;}
+        thead th.total-cell { right: 0; }
+        
+        .table-container input { width: 35px; height: 35px; border: 1px solid transparent; border-radius: 6px; font-size: var(--unified-font); font-weight: 700; color: var(--text-muted); background: transparent; text-align: center; transition: all 0.2s; }
+        .table-container input:focus { border-color: var(--primary); background: var(--surface); outline: none; box-shadow: 0 0 0 2px var(--primary-light); }
+        .table-container input.has-data { color: var(--primary) !important; font-weight: 800; background: var(--primary-light); }
 
-        /* ── ĐÃ SỬA: sticky-col 80px, total-cell 60px ── */
-        .sticky-col { position: sticky; left: 0; z-index: 1500; background-color: #080808 !important; color: #fff; font-weight: 500; width: 100px; min-width: 100px; max-width: 100px; text-align: left; padding-left: 10px; font-size: var(--unified-font); border-right: var(--grid-line) !important; white-space: nowrap; overflow: hidden; }
-        td.sticky-col { text-align: left !important; padding-left: 8px !important; font-family: 'Open Sans', sans-serif !important; }
-        tfoot td.sticky-col { text-align: center !important; padding-left: 0 !important; }
-        .total-cell { position: sticky; right: 0; z-index: 1500; background-color: #0c0c0c !important; color: var(--danger); font-weight: 800; font-size: 13px; min-width: 60px; border-left: var(--grid-line) !important; }
+        /* ROW STATUS (Tri-state) */
+        .row-yellow .sticky-col { color: #d35400 !important; background-color: #fffdf0 !important; }
+        .row-yellow td { background-color: #fffdf0 !important; }
+        .row-yellow .total-cell { background-color: var(--warning) !important; color: #000 !important; }
+        
+        .row-green .sticky-col { color: var(--success) !important; background-color: #f0fdf4 !important; }
+        .row-green td { background-color: #f0fdf4 !important; }
+        .row-green .total-cell { background-color: var(--success) !important; color: #fff !important; }
 
-        thead th.sticky-col { z-index: 2500 !important; top: 0; left: 0; text-align: center !important; padding-left: 0 !important; }
-        thead th.total-cell { z-index: 2500 !important; top: 0; right: 0; }
-        .table-container input { width: 35px; height: 35px; border: 1px solid transparent; border-radius: 50%; font-size: var(--unified-font); font-weight: 700; color: #555; background: transparent; text-align: center; }
-        .table-container input.has-data { color: var(--active-blue) !important; border-color: var(--gold-main) !important; }
-        .row-paid .sticky-col { color: var(--paid-green) !important; }
-        .row-paid .total-cell { background-color: var(--paid-green) !important; color: #000 !important; cursor: pointer; }
-        .row-paid td { background-color: var(--paid-bg) !important; }
-        tfoot { position: sticky; bottom: 0; z-index: 2000; }
-        .grand-total-row td { background-color: #0a0a0a !important; font-weight: 900 !important; color: var(--gold-main); font-size: 14px !important; height: 50px; border-top: var(--grid-line) !important; }
-        tfoot td.sticky-col { color: var(--gold-main) !important; font-weight: 900 !important; font-size: 0.8rem !important; letter-spacing: 1px; }
-        .grand-total-val { position: sticky; right: 0; z-index: 2600; background-color: #0a0a0a !important; border-left: var(--grid-line) !important; text-align: right; padding-right: 15px !important; }
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 6000; padding: 0 15px; }
-        .modal-box { background: #111; padding: 25px; border-radius: 20px; width: 100%; max-width: 360px; border: 0.8px solid var(--gold-main); }
-        .modal-title { color: #fff; text-align: center; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; font-weight: 900; letter-spacing: 2px; }
-        .modal-input { width: 100% !important; height: 44px !important; padding: 0 12px !important; margin-bottom: 12px !important; background: #000 !important; border: 0.8px solid #222 !important; color: var(--gold-main) !important; border-radius: 10px !important; font-size: 0.75rem !important; text-align: center !important; outline: none !important; text-transform: uppercase !important; display: block !important; }
-        .modal-input::placeholder { font-size: 0.7rem; opacity: 0.35; letter-spacing: 1px; }
-        .btn-confirm { background: var(--gold-gradient); color: #000; width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; font-size: 0.85rem; }
-        .btn-cancel { color: #555; text-align: center; margin-top: 15px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+        tfoot { position: sticky; bottom: 0; z-index: 2000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .grand-total-row td { background-color: #f1f2f6 !important; font-weight: 800 !important; color: var(--text-main); font-size: 14.5px !important; height: 50px; border-top: 2px solid var(--border-strong) !important; }
+        .grand-total-val { position: sticky; right: 0; z-index: 2600; background-color: #f1f2f6 !important; border-left: 2px solid var(--border-strong) !important; text-align: right; padding-right: 15px !important; color: var(--danger) !important; }
 
-        #cleanOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 8000; display: none; flex-direction: column; touch-action: none; }
-        .clean-header { padding: 15px 10px; text-align: center; background: #000; border-bottom: 1.5px solid var(--gold-main); flex-shrink: 0; height: 70px; }
-        .clean-footer { position: absolute; bottom: 0; left: 0; width: 100%; height: 80px; padding: 15px; background: rgba(0,0,0,0.9); display: flex; gap: 10px; align-items: center; border-top: 1px solid #222; }
-        .clean-content { position: absolute; top: 70px; bottom: 80px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #000; }
-        #cleanWrapper { width: max-content; height: max-content; transform-origin: center center; background: #050505; }
-        #cleanView table { width: max-content; border: 0.8px solid var(--gold-main); table-layout: auto; }
-        #cleanView th, #cleanView td, #cleanView thead, #cleanView tfoot, #cleanView tr { position: static !important; z-index: auto !important; }
-        #cleanView th, #cleanView td { padding: 6px 4px; font-size: 0.7rem; border: 0.8px solid rgba(212, 175, 55, 0.2); }
-        #cleanView thead th { color: #ffffff; }
-        #cleanView .total-cell { border-left: 0.8px solid rgba(212, 175, 55, 0.2) !important; color: var(--danger) !important; font-weight: 800 !important; font-size: 13px !important; }
-        #cleanView tfoot td { font-size: 14px !important; font-weight: 900 !important; }
-        #cleanView thead th.sticky-col, #cleanView tfoot td.sticky-col { color: var(--gold-main) !important; font-size: 0.8rem !important; font-weight: 900 !important; }
-        #cleanView .sticky-col { border-right: 0.8px solid rgba(212, 175, 55, 0.2) !important; text-align: left; padding-left: 8px; font-weight: 500; color: #fff; font-size: var(--unified-font); }
-        .btn-exit { flex: 1; height: 45px; background: #222; color: #fff; border-radius: 12px; font-weight: 900; border: none; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; }
-        .btn-save-img { flex: 1.5; height: 45px; background: var(--gold-gradient); color: #000; border-radius: 12px; font-weight: 900; border: none; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        /* MODALS */
+        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; z-index: 6000; padding: 0 15px; }
+        .modal-box { background: var(--surface); padding: 25px; border-radius: 16px; width: 100%; max-width: 360px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-title { color: var(--text-main); text-align: center; margin-bottom: 20px; text-transform: uppercase; font-size: 0.9rem; font-weight: 800; letter-spacing: 1px; }
+        .modal-input { width: 100% !important; height: 44px !important; padding: 0 12px !important; margin-bottom: 12px !important; background: var(--bg-main) !important; border: 1px solid var(--border-strong) !important; color: var(--text-main) !important; border-radius: 8px !important; font-size: 0.8rem !important; font-weight: 600 !important; text-align: center !important; outline: none !important; display: block !important; transition: border-color 0.2s; text-transform: uppercase; }
+        .modal-input:focus { border-color: var(--primary) !important; }
+        .modal-input::placeholder { font-weight: 400; color: var(--text-muted); opacity: 0.7; text-transform: none; }
+        
+        .modal-btn-group { display: flex; gap: 10px; margin-top: 5px; }
+        .btn-confirm { background: var(--text-main); color: var(--surface); flex: 2; padding: 14px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
+        .btn-delete { background: var(--danger-light); color: #fff; flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; display: none; }
+        .btn-cancel { color: var(--text-muted); text-align: center; margin-top: 15px; font-size: 0.75rem; font-weight: 600; cursor: pointer; padding: 5px; }
+        
+        .btn-cancel-box { background: var(--bg-main); color: var(--text-muted); flex: 1; padding: 14px; border: 1px solid var(--border-strong); border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
 
-        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
-        .loading-spinner { width: 50px; height: 50px; border: 3px solid #222; border-top-color: var(--gold-main); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        /* CLEAN OVERLAY (Capture) */
+        #cleanOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--surface); z-index: 8000; display: none; flex-direction: column; touch-action: none; }
+        .clean-header { padding: 15px 10px; text-align: center; background: var(--surface); border-bottom: 1px solid var(--border-light); flex-shrink: 0; height: 70px; }
+        .clean-footer { position: absolute; bottom: 0; left: 0; width: 100%; height: 80px; padding: 15px; background: var(--surface); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); display: flex; gap: 10px; align-items: center; }
+        .clean-content { position: absolute; top: 70px; bottom: 80px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--bg-main); }
+        #cleanWrapper { width: max-content; height: max-content; transform-origin: center center; background: var(--surface); padding: 10px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        #cleanView table { width: max-content; border: 1px solid var(--border-strong); }
+        #cleanView th, #cleanView td { position: static !important; z-index: auto !important; padding: 6px 4px; font-size: 0.75rem; border: 1px solid var(--border-light); color: var(--text-main); }
+        #cleanView thead th { background: #f8f9fa; color: var(--text-main); font-weight: 700; }
+        #cleanView .total-cell { color: var(--danger) !important; font-weight: 800 !important; }
+        #cleanView tfoot td { font-weight: 800 !important; background: #f1f2f6; }
+        .btn-exit { flex: 1; height: 45px; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-strong); border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
+        .btn-save-img { flex: 2; height: 45px; background: var(--text-main); color: var(--surface); border-radius: 8px; font-weight: 700; border: none; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+        /* LOADING & NOTIFY */
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+        .loading-spinner { width: 40px; height: 40px; border: 4px solid var(--border-light); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { color: var(--gold-main); font-size: 0.8rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; }
-
-        #notifyBox { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--gold-gradient); color: #000; padding: 10px 20px; border-radius: 30px; font-weight: 900; display: none; z-index: 9999; font-size: 0.75rem; white-space: nowrap; }
+        #notifyBox { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--surface); padding: 10px 20px; border-radius: 20px; font-weight: 600; display: none; z-index: 9999; font-size: 0.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
         .editable { cursor: pointer; }
 
-        #captureTarget { position: fixed; top: 0; left: 0; opacity: 0; pointer-events: none; z-index: -1; background: #050505; display: none; }
-        #captureTarget table { border-collapse: separate; border-spacing: 0; border: 1px solid rgba(212,175,55,0.5); }
-        #captureTarget th, #captureTarget td { border: 0.8px solid rgba(212,175,55,0.25); padding: 10px 8px; text-align: center; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        #captureTarget .cap-header-wrap { background: #000; padding: 18px 20px 14px; text-align: center; border-bottom: 1.5px solid #d4af37; }
-        #captureTarget .cap-title { color: #d4af37; font-size: 18px; font-weight: 900; letter-spacing: 5px; text-transform: uppercase; }
-        #captureTarget .cap-subtitle { color: #d4af37; font-size: 9px; letter-spacing: 4px; text-transform: uppercase; opacity: 0.6; margin-top: 4px; }
-        #captureTarget .cap-date { color: #666; font-size: 9px; letter-spacing: 2px; margin-top: 4px; }
-        #captureTarget thead th { background: #000 !important; color: #fff; font-weight: 900; font-size: 10px; }
-        #captureTarget thead th.cap-name-col, #captureTarget thead th.cap-total-col { color: #d4af37 !important; font-size: 12px; letter-spacing: 1px; }
-        #captureTarget .cap-name-col { background: #080808 !important; color: #fff; font-weight: 500; text-align: left; padding-left: 14px; font-size: 13px; min-width: 100px; border-right: 0.8px solid rgba(212,175,55,0.35) !important; }
-        #captureTarget .cap-total-col { background: #0c0c0c !important; color: #ff4d4d; font-weight: 800; font-size: 13px; min-width: 90px; border-left: 0.8px solid rgba(212,175,55,0.35) !important; }
-        #captureTarget .cap-paid-row .cap-name-col { color: #10b981 !important; }
-        #captureTarget .cap-paid-row td { background: rgba(16,185,129,0.1) !important; }
-        #captureTarget .cap-paid-row .cap-total-col { background: #10b981 !important; color: #000 !important; }
-        #captureTarget tfoot td { background: #0a0a0a !important; color: #d4af37; font-weight: 900; font-size: 14px; height: 46px; border-top: 0.8px solid rgba(212,175,55,0.35) !important; }
-        #captureTarget tfoot td.cap-name-col { color: #d4af37 !important; font-size: 12px; letter-spacing: 1px; }
-        #captureTarget tfoot td.cap-total-col { text-align: right; padding-right: 14px; color: #d4af37; }
-        #captureTarget .cap-qty-cell { font-size: 12px; font-weight: 700; color: #3b82f6; }
-        #captureTarget .cap-zero-cell { color: #333; font-size: 11px; }
-        #captureTarget .cap-footer-bar { background: #000; padding: 10px 20px; text-align: center; border-top: 1px solid #111; color: #333; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; }
+        /* Hidden Capture Target */
+        #captureTarget { position: fixed; top: 0; left: 0; opacity: 0; pointer-events: none; z-index: -1; background: #ffffff; display: none; }
+        #captureTarget .cap-wrap { background: #ffffff; display: inline-block; padding: 20px 25px; font-family: 'Inter', sans-serif; }
+        #captureTarget table { border-collapse: collapse; width: max-content; }
+        #captureTarget th, #captureTarget td { border: 1px solid #cbd5e1; padding: 10px 8px; text-align: center; }
+        #captureTarget .cap-header-wrap { text-align: center; margin-bottom: 20px; }
+        #captureTarget .cap-title { color: #0f172a; font-size: 22px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; }
+        #captureTarget .cap-subtitle { color: #475569; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-top: 6px; }
+        #captureTarget .cap-page-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 14px; border-radius: 12px; font-size: 11px; font-weight: 800; margin-top: 12px; }
+        #captureTarget .cap-date { color: #94a3b8; font-size: 10px; margin-top: 6px; font-weight: 500; }
+        #captureTarget thead th { background: #f1f5f9; color: #1e293b; font-weight: 700; font-size: 11px; vertical-align: bottom; }
+        #captureTarget .cap-name-col { text-align: left; padding-left: 14px; font-weight: 700; font-size: 12.5px; min-width: 120px; white-space: nowrap; color: #1e293b;}
+        #captureTarget .cap-total-col { color: #e11d48; font-weight: 800; font-size: 14px; white-space: nowrap; }
+        #captureTarget .cap-row-yellow td { background: #fef08a !important; }
+        #captureTarget .cap-row-green td { background: #bbf7d0 !important; }
+        #captureTarget tfoot td { background: #f8fafc; font-weight: 800; font-size: 13.5px; color: #0f172a; }
     </style>
 </head>
-<body onclick="handleGlobalClick(event)">
+<body>
     <div id="notifyBox">Thông báo</div>
 
     <div id="loadingOverlay">
         <div class="loading-spinner"></div>
-        <div class="loading-text">Đang xuất ảnh...</div>
+        <div style="color:var(--text-main); font-weight:700; font-size:0.9rem;">Đang xử lý...</div>
     </div>
 
     <div id="captureTarget"></div>
 
     <div class="app-container" id="mainApp">
-        <div class="streak"></div>
-        <div class="header">
-            <h2 class="header-title">ĐƠN HÀNG</h2>
-            <div class="made-by">— ANH TẤN —</div>
+        <div class="top-section">
+            <div class="header">
+                <h2 class="header-title">ĐƠN HÀNG</h2>
+                <div class="made-by">ANH TẤN - 0777101102</div>
+            </div>
+            <div class="tabs-container" id="tabsContainer">
+                </div>
         </div>
+
         <div class="control-panel">
             <div class="action-row">
-                <button class="btn-capture-main" onclick="enterCleanMode()">
-                    <svg style="width:15px;height:15px;" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>
-                    CHỤP ĐƠN HÀNG
+                <button class="btn-tool" onclick="undo()" id="btnUndo">
+                    <svg style="width:16px;height:16px" viewBox="0 0 24 24"><path fill="currentColor" d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" /></svg>
+                    HOÀN TÁC
                 </button>
-                <button class="btn-reset-main" onclick="openModal('modalReset')">
-                    <svg style="width:13px;height:13px;" viewBox="0 0 24 24"><path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
+                <button class="btn-tool" onclick="openModal('modalReset')">
+                    <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
                     DỌN DẸP
+                </button>
+                <button class="btn-tool" style="border-color:var(--text-main); color:var(--text-main);" onclick="enterCleanMode()">
+                    <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>
+                    CHỤP ĐƠN
                 </button>
             </div>
             <div class="primary-row">
-                <button class="btn-main" onclick="openModal('modalKhach')">👤 + KHÁCH</button>
-                <button class="btn-main" onclick="openModal('modalHang')">📦 + HÀNG</button>
+                <button class="btn-main" onclick="openModal('modalKhach')">👤 + THÊM KHÁCH</button>
+                <button class="btn-main" onclick="openModal('modalHang')">📦 + THÊM HÀNG</button>
             </div>
         </div>
+
         <div class="table-container" id="scrollContainer">
             <table id="orderTable">
                 <thead><tr id="headerRow"></tr></thead>
@@ -154,10 +198,9 @@
         </div>
     </div>
 
-    <!-- CLEAN MODE -->
     <div id="cleanOverlay">
         <div class="clean-header">
-            <div style="color:var(--gold-main);font-weight:900;font-size:1rem;letter-spacing:4px;text-transform:uppercase;">ĐƠN HÀNG - ANH TẤN</div>
+            <div style="color:var(--text-main);font-weight:800;font-size:1.1rem;letter-spacing:1px;">XEM TRƯỚC ĐƠN HÀNG</div>
         </div>
         <div class="clean-content" id="cleanContentArea">
             <div id="cleanWrapper"><div id="cleanView"></div></div>
@@ -165,48 +208,80 @@
         <div class="clean-footer">
             <button class="btn-exit" onclick="exitCleanMode()">QUAY LẠI</button>
             <button class="btn-save-img" onclick="saveAsImage(event)">
-                <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>
+                <svg style="width:18px;height:18px;" viewBox="0 0 24 24"><path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>
                 LƯU ẢNH
             </button>
         </div>
     </div>
 
-    <!-- MODALS -->
     <div class="modal" id="modalKhach">
         <div class="modal-box">
             <h3 class="modal-title" id="khachTitle">THÊM KHÁCH MỚI</h3>
-            <input type="text" id="inKName" class="modal-input" placeholder="TÊN KHÁCH HÀNG..." oninput="this.value=this.value.toUpperCase()">
-            <button class="btn-confirm" id="btnKhachConfirm" onclick="confirmAddK()">XÁC NHẬN</button>
-            <div class="btn-cancel" onclick="closeModal('modalKhach')">QUAY LẠI</div>
+            <input type="text" id="inKName" class="modal-input" placeholder="Nhập tên khách hàng..." oninput="this.value = this.value.toUpperCase()">
+            <div class="modal-btn-group">
+                <button class="btn-delete" id="btnKhachDelete" onclick="deleteCustomer()">XÓA</button>
+                <button class="btn-confirm" id="btnKhachConfirm" onclick="confirmAddK()">LƯU LẠI</button>
+            </div>
+            <div class="btn-cancel" onclick="closeModal('modalKhach')">Hủy bỏ</div>
         </div>
     </div>
+    
     <div class="modal" id="modalHang">
         <div class="modal-box">
             <h3 class="modal-title" id="hangTitle">THÊM HÀNG MỚI</h3>
-            <input type="text" id="inPName" class="modal-input" placeholder="TÊN HÀNG..." oninput="this.value=this.value.toUpperCase()">
-            <input type="number" id="inPPrice" class="modal-input" placeholder="ĐƠN GIÁ VNĐ">
-            <button class="btn-confirm" id="btnHangConfirm" onclick="confirmAddP()">THÊM MỚI</button>
-            <div class="btn-cancel" onclick="closeModal('modalHang')">QUAY LẠI</div>
+            <input type="text" id="inPName" class="modal-input" placeholder="Nhập tên hàng..." oninput="this.value = this.value.toUpperCase()">
+            <input type="number" id="inPPrice" class="modal-input" placeholder="Đơn giá" inputmode="numeric">
+            <div class="modal-btn-group">
+                <button class="btn-delete" id="btnHangDelete" onclick="deleteProduct()">XÓA</button>
+                <button class="btn-confirm" id="btnHangConfirm" onclick="confirmAddP()">LƯU LẠI</button>
+            </div>
+            <div class="btn-cancel" onclick="closeModal('modalHang')">Hủy bỏ</div>
         </div>
     </div>
+
+    <div class="modal" id="modalPageName">
+        <div class="modal-box">
+            <h3 class="modal-title" id="pageTitleLabel">TÊN TRANG MỚI</h3>
+            <input type="text" id="inPageName" class="modal-input" placeholder="Ví dụ: Đơn Ngày 21/6" oninput="this.value = this.value.toUpperCase()">
+            <button class="btn-confirm" style="width:100%;" onclick="confirmAddPage()">TẠO TRANG</button>
+            <div class="btn-cancel" onclick="closeModal('modalPageName')">Hủy bỏ</div>
+        </div>
+    </div>
+
+    <div class="modal" id="modalEditPage">
+        <div class="modal-box">
+            <h3 class="modal-title">CHỈNH SỬA TRANG</h3>
+            <input type="text" id="inEditPageName" class="modal-input" placeholder="Tên trang mới..." oninput="this.value = this.value.toUpperCase()">
+            <div class="modal-btn-group">
+                <button class="btn-delete" id="btnPageDelete" onclick="deletePage()">XÓA TRANG</button>
+                <button class="btn-confirm" onclick="confirmEditPage()">LƯU LẠI</button>
+            </div>
+            <div class="btn-cancel" onclick="closeModal('modalEditPage')">Hủy bỏ</div>
+        </div>
+    </div>
+
+    <div class="modal" id="modalConfirmDelete" style="z-index: 7000;">
+        <div class="modal-box">
+            <h3 class="modal-title" style="color:var(--danger); margin-bottom: 10px;">XÁC NHẬN XÓA</h3>
+            <p id="confirmDeleteText" style="text-align:center;color:var(--text-muted);font-size:0.85rem;margin-bottom:20px;line-height:1.4;"></p>
+            <div class="modal-btn-group" style="margin-top: 15px;">
+                <button class="btn-cancel-box" onclick="closeModal('modalConfirmDelete')">HỦY BỎ</button>
+                <button class="btn-confirm" style="background:var(--danger);" id="btnExecuteDelete">XÓA NGAY</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="modalReset">
         <div class="modal-box">
-            <h3 class="modal-title">XÓA TRẮNG SỔ?</h3>
-            <p style="text-align:center;color:#666;font-size:0.75rem;margin-bottom:20px;">Dữ liệu sẽ biến mất vĩnh viễn.</p>
-            <button class="btn-confirm" style="background:var(--danger);color:#fff;" onclick="confirmReset()">XÓA NGAY</button>
-            <div class="btn-cancel" onclick="closeModal('modalReset')">HỦY BỎ</div>
-        </div>
-    </div>
-    <div class="modal" id="modalPayConfirm">
-        <div class="modal-box">
-            <h3 class="modal-title" id="payModalTitle" style="color:var(--paid-green);font-size:1rem;">XÁC NHẬN CHỐT ĐƠN</h3>
-            <p id="payModalDesc" style="text-align:center;color:#aaa;font-size:0.8rem;margin-bottom:25px;"></p>
-            <button class="btn-confirm" id="payModalBtn" style="background:var(--paid-green);color:#000;" onclick="confirmPayAction()">ĐÃ THANH TOÁN</button>
-            <div class="btn-cancel" onclick="closeModal('modalPayConfirm')">QUAY LẠI</div>
+            <h3 class="modal-title" style="color:var(--danger)">XÓA TRANG HIỆN TẠI?</h3>
+            <p style="text-align:center;color:var(--text-muted);font-size:0.8rem;margin-bottom:20px;">Dữ liệu của trang này sẽ bị làm sạch hoàn toàn.</p>
+            <button class="btn-confirm" style="background:var(--danger);width:100%;" onclick="confirmReset()">XÓA NGAY</button>
+            <div class="btn-cancel" onclick="closeModal('modalReset')">Hủy bỏ</div>
         </div>
     </div>
 
     <script>
+        // --- Xử lý vuốt trên mobile ---
         let touchStartY = 0;
         document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: false });
         document.addEventListener('touchmove', e => {
@@ -215,52 +290,46 @@
             if (diff > 0 && sc && sc.scrollTop <= 0) e.preventDefault();
         }, { passive: false });
 
-        document.addEventListener('touchstart', e => {
-            const active = document.activeElement;
-            if (active && active.tagName === 'INPUT' && active.closest('.table-container')) {
-                if (!e.target.closest('.table-container input')) {
-                    active.blur();
-                }
-            }
-        }, { passive: true });
+        // --- CẤU TRÚC DỮ LIỆU ---
+        const STORAGE_KEY = 'VoTan_OrderManager_V2';
+        
+        let appState = {
+            activePageId: 'page_1',
+            pages: [
+                { id: 'page_1', name: 'ĐƠN HÀNG 1', products: [], customers: [] }
+            ]
+        };
+        
+        let historyStack = []; 
+        let lastTap = 0, editTarget = {type:null,index:null, id:null};
+        let pendingDeleteAction = null; 
 
-        const STORAGE_KEY = 'VoTan_Precision_Master_12_6';
-        let appState = { products: [{name:"HÀNG A",price:1000},{name:"HÀNG B",price:2000}], customers: [{name:"KHÁCH 01",qtys:[0,0],paid:false}] };
-        let lastTap = 0, editTarget = {type:null,index:null}, targetPayIndex = null;
+        function getPage() {
+            return appState.pages.find(p => p.id === appState.activePageId) || appState.pages[0];
+        }
 
+        // --- ÂM THANH ---
         function playVictoryChime() {
             try {
                 const AC = window.AudioContext || window.webkitAudioContext;
-                if (!AC) return;
-                const ctx = new AC();
-
-                // Âm chính ~1050Hz - tiếng DING của chuông đồng nhà hàng
+                if (!AC) return; const ctx = new AC();
                 const osc1 = ctx.createOscillator(), gain1 = ctx.createGain();
                 osc1.connect(gain1); gain1.connect(ctx.destination);
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(1050, ctx.currentTime);
-                gain1.gain.setValueAtTime(0.7, ctx.currentTime);
-                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.2);
+                osc1.type = 'sine'; osc1.frequency.setValueAtTime(1050, ctx.currentTime);
+                gain1.gain.setValueAtTime(0.7, ctx.currentTime); gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.2);
                 osc1.start(ctx.currentTime); osc1.stop(ctx.currentTime + 2.2);
+            } catch(e) {}
+        }
 
-                // Hoà âm 2 ~2100Hz - lớp giữa tạo độ sáng
-                const osc2 = ctx.createOscillator(), gain2 = ctx.createGain();
-                osc2.connect(gain2); gain2.connect(ctx.destination);
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(2100, ctx.currentTime);
-                gain2.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-                osc2.start(ctx.currentTime); osc2.stop(ctx.currentTime + 1.0);
-
-                // Hoà âm 3 ~3180Hz (inharmonic partial - đặc trưng chuông kim loại)
-                const osc3 = ctx.createOscillator(), gain3 = ctx.createGain();
-                osc3.connect(gain3); gain3.connect(ctx.destination);
-                osc3.type = 'sine';
-                osc3.frequency.setValueAtTime(3180, ctx.currentTime);
-                gain3.gain.setValueAtTime(0.12, ctx.currentTime);
-                gain3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-                osc3.start(ctx.currentTime); osc3.stop(ctx.currentTime + 0.4);
-
+        function playTick() {
+            try {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return; const ctx = new AC();
+                const osc = ctx.createOscillator(), gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(600, ctx.currentTime);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.1);
             } catch(e) {}
         }
 
@@ -270,67 +339,258 @@
             setTimeout(() => box.style.display = 'none', dur);
         }
 
+        // --- HỆ THỐNG CUSTOM CONFIRM XÓA ---
+        function confirmAction(message, actionCallback) {
+            document.getElementById('confirmDeleteText').innerText = message;
+            pendingDeleteAction = actionCallback;
+            openModal('modalConfirmDelete');
+        }
+
+        document.getElementById('btnExecuteDelete').onclick = function() {
+            if (pendingDeleteAction) pendingDeleteAction();
+            closeModal('modalConfirmDelete');
+        };
+
+        // --- KHỞI TẠO & LƯU TRỮ ---
         function init() {
             const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) { try { appState = JSON.parse(saved); } catch(e) {} }
+            if (saved) {
+                try {
+                    let parsed = JSON.parse(saved);
+                    if (!parsed.pages) {
+                        appState = {
+                            activePageId: 'page_1',
+                            pages: [{
+                                id: 'page_1',
+                                name: 'ĐƠN CŨ',
+                                products: parsed.products || [],
+                                customers: (parsed.customers || []).map(c => ({...c, status: c.paid ? 2 : 0}))
+                            }]
+                        };
+                    } else {
+                        appState = parsed;
+                    }
+                } catch(e) {}
+            }
+            updateUndoButton();
+            renderTabs();
             render();
-            setTimeout(() => {
-                if (document.activeElement && document.activeElement !== document.body) {
-                    document.activeElement.blur();
-                }
-            }, 150);
         }
-        function sync() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); }
 
+        function sync() { 
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); 
+            updateUndoButton();
+        }
+
+        // --- HOÀN TÁC (UNDO) TỐI ƯU HÓA BỘ NHỚ ---
+        function saveHistory() {
+            const currentState = JSON.stringify(appState);
+            // Chỉ thêm vào lịch sử nếu trạng thái này khác với trạng thái lưu gần nhất
+            if (historyStack.length === 0 || historyStack[historyStack.length - 1] !== currentState) {
+                historyStack.push(currentState);
+                if (historyStack.length > 20) historyStack.shift(); 
+                updateUndoButton();
+            }
+        }
+
+        function undo() {
+            if (historyStack.length > 0) {
+                let prevState = historyStack.pop();
+                const currentStateStr = JSON.stringify(appState);
+                
+                // Loại bỏ các trạng thái trùng lặp với hiện tại (trường hợp click focus nhưng không sửa đổi)
+                while (prevState === currentStateStr && historyStack.length > 0) {
+                    prevState = historyStack.pop();
+                }
+                
+                if (prevState !== currentStateStr) {
+                    appState = JSON.parse(prevState);
+                    sync(); 
+                    renderTabs();
+                    render();
+                    notify("↺ Đã hoàn tác");
+                }
+            }
+        }
+
+        function updateUndoButton() {
+            const btn = document.getElementById('btnUndo');
+            if (historyStack.length === 0) btn.classList.add('disabled');
+            else btn.classList.remove('disabled');
+        }
+
+        // --- QUẢN LÝ TRANG (TABS) ---
+        let lastTabTapTime = 0;
+        let lastTabTapId = null;
+
+        function handleTabClick(e, id) {
+            const now = Date.now();
+            if (now - lastTabTapTime < 300 && lastTabTapId === id) {
+                startEditPage(id);
+                lastTabTapTime = 0; 
+                lastTabTapId = null;
+                e.preventDefault();
+            } else {
+                lastTabTapTime = now;
+                lastTabTapId = id;
+                if (appState.activePageId !== id) {
+                    appState.activePageId = id;
+                    renderTabs();
+                    render();
+                }
+            }
+        }
+
+        function renderTabs() {
+            const container = document.getElementById('tabsContainer');
+            let html = '';
+            appState.pages.forEach(p => {
+                const activeCls = p.id === appState.activePageId ? 'active' : '';
+                html += `<div class="tab-btn ${activeCls}" onclick="handleTabClick(event, '${p.id}')">${p.name}</div>`;
+            });
+            html += `<div class="tab-add" onclick="promptAddPage()">+ THÊM</div>`;
+            container.innerHTML = html;
+        }
+
+        function promptAddPage() {
+            document.getElementById('inPageName').value = '';
+            openModal('modalPageName');
+        }
+
+        function confirmAddPage() {
+            let name = document.getElementById('inPageName').value.trim().toUpperCase();
+            if(!name) name = "TRANG " + (appState.pages.length + 1);
+            saveHistory();
+            const newId = 'page_' + Date.now();
+            appState.pages.push({ id: newId, name: name, products: [], customers: [] });
+            appState.activePageId = newId;
+            sync(); renderTabs(); render(); closeModal('modalPageName');
+        }
+
+        function startEditPage(id) {
+            editTarget = { type: 'page', id: id };
+            const page = appState.pages.find(p => p.id === id);
+            document.getElementById('inEditPageName').value = page.name;
+            
+            const delBtn = document.getElementById('btnPageDelete');
+            if (appState.pages.length <= 1) {
+                delBtn.style.display = 'none';
+            } else {
+                delBtn.style.display = 'block';
+            }
+            openModal('modalEditPage');
+        }
+
+        function confirmEditPage() {
+            saveHistory();
+            const newName = document.getElementById('inEditPageName').value.trim().toUpperCase();
+            if (newName) {
+                const page = appState.pages.find(p => p.id === editTarget.id);
+                if (page) page.name = newName;
+                sync(); renderTabs(); render(); closeModal('modalEditPage');
+            }
+        }
+
+        function deletePage() {
+            if (appState.pages.length <= 1) return notify("Không thể xóa trang cuối cùng!");
+            
+            confirmAction(`Xóa trang "${document.getElementById('inEditPageName').value}" sẽ làm mất toàn bộ dữ liệu đơn hàng bên trong. Bạn có chắc không?`, () => {
+                saveHistory();
+                appState.pages = appState.pages.filter(p => p.id !== editTarget.id);
+                if (appState.activePageId === editTarget.id) {
+                    appState.activePageId = appState.pages[0].id; 
+                }
+                sync(); renderTabs(); render(); closeModal('modalEditPage');
+                notify("Đã xóa trang");
+            });
+        }
+
+        // --- RENDER BẢNG CHÍNH ---
         function render() {
+            const page = getPage();
             const h = document.getElementById('headerRow'), b = document.getElementById('bodyRows'), f = document.getElementById('footerTotal');
+            
+            // Header
             let hM = `<th class="sticky-col">TÊN KHÁCH</th>`;
-            appState.products.forEach((p, pi) => {
-                hM += `<th class="editable" onclick="detectDoubleTap(event,'product',${pi})">${p.name}<br><span style="font-size:9.5px;opacity:0.6;font-weight:500;">${p.price.toLocaleString()}</span></th>`;
+            page.products.forEach((p, pi) => {
+                let isLong = p.name.length > 10;
+                let thStyle = isLong 
+                    ? `style="white-space: normal; min-width: 90px; max-width: 110px; line-height: 1.35; padding: 8px 4px;"` 
+                    : `style="white-space: nowrap; min-width: 80px; padding: 8px 4px;"`;
+                
+                let nameSize = isLong ? '9px' : '10px';
+
+                hM += `<th class="editable" ${thStyle} onclick="detectDoubleTap(event,'product',${pi})">
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; height:100%; gap:4px;">
+                        <span style="font-size:${nameSize}; font-weight:600; color:var(--text-muted);">${p.name}</span>
+                        <span style="font-size:9.5px; opacity:0.9; font-weight:700; color:var(--text-main);">${p.price.toLocaleString()}</span>
+                    </div>
+                </th>`;
             });
             hM += `<th class="total-cell">TỔNG</th>`; h.innerHTML = hM;
 
+            // Body
             let bM = "";
-            appState.customers.forEach((c, ci) => {
-                let rC = `<tr class="${c.paid?'row-paid':''}"><td class="sticky-col editable" onclick="detectDoubleTap(event,'customer',${ci})">${c.name}</td>`;
-                appState.products.forEach((p, pi) => {
+            page.customers.forEach((c, ci) => {
+                let rowCls = '';
+                if (c.status === 1) rowCls = 'row-yellow';
+                else if (c.status === 2) rowCls = 'row-green';
+
+                let displayName = `<span style="color:var(--primary); font-weight:800; opacity:0.85; margin-right:4px;">${ci + 1}.</span><span style="font-weight:700;">${c.name}</span>`;
+
+                // Cập nhật onfocus gọi saveHistory() để lưu lại trạng thái trước khi nhập
+                let rC = `<tr class="${rowCls}"><td class="sticky-col editable" onclick="detectDoubleTap(event,'customer',${ci})">${displayName}</td>`;
+                page.products.forEach((p, pi) => {
                     const q = c.qtys[pi] || 0;
-                    rC += `<td><input type="text" class="${q>0?'has-data':''}" data-ci="${ci}" data-pi="${pi}" inputmode="decimal" value="${q}" oninput="updateQty(this)" onkeydown="if(event.key==='Enter'||event.keyCode===13){this.blur();return false;}" onclick="this.select()"></td>`;
+                    rC += `<td><input type="text" class="${q>0?'has-data':''}" data-ci="${ci}" data-pi="${pi}" inputmode="decimal" value="${q>0?q:''}" placeholder="-" oninput="updateQty(this)" onblur="formatQty(this)" onfocus="saveHistory(); this.select();"></td>`;
                 });
-                rC += `<td class="total-cell" id="t-r-${ci}" onclick="initiatePay(${ci})">0</td></tr>`;
+                rC += `<td class="total-cell" id="t-r-${ci}" onclick="cyclePayStatus(${ci})">0</td></tr>`;
                 bM += rC;
             });
+            
+            if (page.customers.length === 0) {
+                bM = `<tr><td colspan="${page.products.length + 2}" style="padding:30px; color:var(--text-muted);">Chưa có dữ liệu. Bấm Thêm Khách để bắt đầu.</td></tr>`;
+            }
             b.innerHTML = bM;
 
-            let fM = `<tr class="grand-total-row"><td class="sticky-col">TỔNG</td>`;
-            appState.products.forEach((p, pi) => { fM += `<td class="col-sum-val" id="c-s-${pi}">0</td>`; });
+            // Footer
+            let fM = `<tr class="grand-total-row"><td class="sticky-col">TỔNG CỘNG</td>`;
+            page.products.forEach((p, pi) => { fM += `<td class="col-sum-val" id="c-s-${pi}">0</td>`; });
             fM += `<td class="grand-total-val" id="g-t">0</td></tr>`;
-            f.innerHTML = fM; calc(); setTimeout(fitText, 50);
+            f.innerHTML = fM; 
+            
+            calc(); 
         }
 
+        // Đã xóa saveHistory() khỏi updateQty để không lưu rác theo từng nhịp gõ phím
         function updateQty(i) {
-            const ci = parseInt(i.dataset.ci), pi = parseInt(i.dataset.pi), q = parseFloat(i.value) || 0;
-            appState.customers[ci].qtys[pi] = q; i.classList.toggle('has-data', q > 0); sync(); calc();
+            const page = getPage();
+            const ci = parseInt(i.dataset.ci), pi = parseInt(i.dataset.pi);
+            let val = i.value.replace(/,/g, '.'); 
+            let q = parseFloat(val);
+            if(isNaN(q)) q = 0;
+            
+            page.customers[ci].qtys[pi] = q; 
+            i.classList.toggle('has-data', q > 0); 
+            sync(); calc();
         }
-
-        function fitText() {
-            document.querySelectorAll('.sticky-col').forEach(cell => {
-                cell.style.fontSize = '';
-                const defaultFs = cell.closest('thead') ? 12.8 : cell.closest('tfoot') ? 12 : 13;
-                let fs = defaultFs;
-                cell.style.fontSize = fs + 'px';
-                while (cell.scrollWidth > cell.clientWidth + 1 && fs > 7) {
-                    fs -= 0.5;
-                    cell.style.fontSize = fs + 'px';
-                }
-            });
+        
+        // Hỗ trợ triệt để dấu phẩy (1,5) định dạng chuẩn hóa khi bấm sang ô khác
+        function formatQty(i) {
+            let val = i.value.replace(/,/g, '.'); 
+            let q = parseFloat(val);
+            if (isNaN(q) || q === 0) i.value = '';
+            else i.value = q;
         }
 
         function calc() {
-            let colSums = new Array(appState.products.length).fill(0), grand = 0;
-            appState.customers.forEach((c, ci) => {
+            const page = getPage();
+            if(page.products.length === 0 || page.customers.length === 0) return;
+            
+            let colSums = new Array(page.products.length).fill(0), grand = 0;
+            page.customers.forEach((c, ci) => {
                 let rS = 0;
-                appState.products.forEach((p, pi) => { const q = c.qtys[pi] || 0; colSums[pi] += q; rS += q * p.price; });
+                page.products.forEach((p, pi) => { const q = c.qtys[pi] || 0; colSums[pi] += q; rS += q * p.price; });
                 const el = document.getElementById(`t-r-${ci}`); if (el) el.innerText = rS.toLocaleString();
                 grand += rS;
             });
@@ -338,31 +598,23 @@
             const gt = document.getElementById('g-t'); if (gt) gt.innerText = grand.toLocaleString();
         }
 
-        function initiatePay(ci) {
-            targetPayIndex = ci;
-            const c = appState.customers[ci];
-            const t = document.getElementById('payModalTitle'), d = document.getElementById('payModalDesc'), btn = document.getElementById('payModalBtn');
-            if (!c.paid) {
-                t.innerText = "XÁC NHẬN CHỐT ĐƠN"; t.style.color = "var(--paid-green)";
-                d.innerHTML = `Khách hàng <strong style="color:#fff;">${c.name}</strong> đã thanh toán toàn bộ?`;
-                btn.innerText = "ĐÃ THANH TOÁN"; btn.style.background = "var(--paid-green)"; btn.style.color = "#000";
-            } else {
-                t.innerText = "HỦY CHỐT ĐƠN"; t.style.color = "var(--danger)";
-                d.innerHTML = `Hủy trạng thái đã chốt cho khách <strong style="color:#fff;">${c.name}</strong>?`;
-                btn.innerText = "XÁC NHẬN HỦY"; btn.style.background = "var(--danger)"; btn.style.color = "#fff";
-            }
-            openModal('modalPayConfirm');
+        // --- TRI-STATE CLICK (CHU KỲ TRẠNG THÁI) ---
+        function cyclePayStatus(ci) {
+            saveHistory();
+            const page = getPage();
+            let c = page.customers[ci];
+            let s = c.status || 0;
+            
+            s = (s + 1) % 3; 
+            c.status = s;
+            
+            if (s === 1) { playTick(); } 
+            else if (s === 2) { playVictoryChime(); } 
+            
+            sync(); render();
         }
 
-        function confirmPayAction() {
-            if (targetPayIndex !== null) {
-                const was = appState.customers[targetPayIndex].paid;
-                appState.customers[targetPayIndex].paid = !was;
-                if (!was) playVictoryChime();
-                sync(); render(); closeModal('modalPayConfirm'); targetPayIndex = null;
-            }
-        }
-
+        // --- EDIT VÀ DELETE (DOUBLE TAP HÀNG & KHÁCH) ---
         function detectDoubleTap(e, type, index) {
             const now = Date.now();
             if (now - lastTap < 300 && now - lastTap > 0) {
@@ -372,112 +624,198 @@
             lastTap = now;
         }
 
+        // KHÁCH
         function startEditCustomer(i) {
-            editTarget = {type:'customer',index:i};
-            document.getElementById('khachTitle').innerText = "SỬA TÊN KHÁCH";
-            document.getElementById('inKName').value = appState.customers[i].name;
+            const page = getPage();
+            editTarget = {type:'customer', index:i};
+            document.getElementById('khachTitle').innerText = "CHỈNH SỬA KHÁCH";
+            document.getElementById('inKName').value = page.customers[i].name;
             document.getElementById('btnKhachConfirm').onclick = confirmEditK;
+            document.getElementById('btnKhachDelete').style.display = "block"; 
             openModal('modalKhach');
         }
+        
         function confirmEditK() {
+            saveHistory();
             const n = document.getElementById('inKName').value.trim().toUpperCase();
-            if (n) { appState.customers[editTarget.index].name = n; sync(); render(); closeModal('modalKhach'); resetKhachModal(); }
+            if (n) { getPage().customers[editTarget.index].name = n; sync(); render(); closeModal('modalKhach'); resetKhachModal(); }
         }
-        function resetKhachModal() { document.getElementById('khachTitle').innerText = "THÊM KHÁCH MỚI"; document.getElementById('inKName').value = ""; document.getElementById('btnKhachConfirm').onclick = confirmAddK; }
+        
+        function deleteCustomer() {
+            confirmAction(`Bạn chắc chắn muốn xóa khách hàng "${getPage().customers[editTarget.index].name}"?`, () => {
+                saveHistory();
+                getPage().customers.splice(editTarget.index, 1);
+                sync(); render(); closeModal('modalKhach'); resetKhachModal();
+                notify("Đã xóa khách");
+            });
+        }
+        
+        function resetKhachModal() { 
+            document.getElementById('khachTitle').innerText = "THÊM KHÁCH MỚI"; 
+            document.getElementById('inKName').value = ""; 
+            document.getElementById('btnKhachConfirm').onclick = confirmAddK; 
+            document.getElementById('btnKhachDelete').style.display = "none";
+        }
 
+        // HÀNG
         function startEditProduct(i) {
-            editTarget = {type:'product',index:i};
-            document.getElementById('hangTitle').innerText = "SỬA TÊN & GIÁ HÀNG";
-            document.getElementById('inPName').value = appState.products[i].name;
-            document.getElementById('inPPrice').value = appState.products[i].price;
-            document.getElementById('btnHangConfirm').onclick = confirmEditP_Action;
+            const page = getPage();
+            editTarget = {type:'product', index:i};
+            document.getElementById('hangTitle').innerText = "CHỈNH SỬA HÀNG";
+            document.getElementById('inPName').value = page.products[i].name;
+            document.getElementById('inPPrice').value = page.products[i].price;
+            document.getElementById('btnHangConfirm').onclick = confirmEditP;
+            document.getElementById('btnHangDelete').style.display = "block"; 
             openModal('modalHang');
         }
-        function confirmEditP_Action() {
+        
+        function confirmEditP() {
+            saveHistory();
             const n = document.getElementById('inPName').value.trim().toUpperCase();
             const p = parseInt(document.getElementById('inPPrice').value);
-            if (n && p) { appState.products[editTarget.index].name = n; appState.products[editTarget.index].price = p; sync(); render(); closeModal('modalHang'); resetHangModal(); }
+            if (n && p) { getPage().products[editTarget.index].name = n; getPage().products[editTarget.index].price = p; sync(); render(); closeModal('modalHang'); resetHangModal(); }
         }
-        function resetHangModal() { document.getElementById('hangTitle').innerText = "THÊM HÀNG MỚI"; document.getElementById('inPName').value = ""; document.getElementById('inPPrice').value = ""; document.getElementById('btnHangConfirm').onclick = confirmAddP; }
+        
+        function deleteProduct() {
+            confirmAction(`Xóa cột hàng hóa "${getPage().products[editTarget.index].name}"? \nDữ liệu số lượng của khách trong cột này cũng sẽ bị xóa.`, () => {
+                saveHistory();
+                const page = getPage();
+                page.products.splice(editTarget.index, 1);
+                page.customers.forEach(c => {
+                    c.qtys.splice(editTarget.index, 1);
+                });
+                sync(); render(); closeModal('modalHang'); resetHangModal();
+                notify("Đã xóa hàng hóa");
+            });
+        }
+        
+        function resetHangModal() { 
+            document.getElementById('hangTitle').innerText = "THÊM HÀNG MỚI"; 
+            document.getElementById('inPName').value = ""; 
+            document.getElementById('inPPrice').value = ""; 
+            document.getElementById('btnHangConfirm').onclick = confirmAddP; 
+            document.getElementById('btnHangDelete').style.display = "none";
+        }
 
+        // ADD MỚI
+        function confirmAddK() { 
+            const n = document.getElementById('inKName').value.trim().toUpperCase(); 
+            if (n) { 
+                saveHistory();
+                const page = getPage();
+                page.customers.push({name:n, qtys:new Array(page.products.length).fill(0), status: 0}); 
+                sync(); render(); closeModal('modalKhach'); document.getElementById('inKName').value = ""; 
+            } 
+        }
+        
+        function confirmAddP() { 
+            const n = document.getElementById('inPName').value.trim().toUpperCase(), p = parseInt(document.getElementById('inPPrice').value); 
+            if (n && p) { 
+                saveHistory();
+                const page = getPage();
+                page.products.push({name:n, price:p}); 
+                page.customers.forEach(c => c.qtys.push(0)); 
+                sync(); render(); closeModal('modalHang'); document.getElementById('inPName').value = ""; document.getElementById('inPPrice').value = ""; 
+            } 
+        }
+
+        // DỌN DẸP TRANG
+        function confirmReset() { 
+            saveHistory();
+            const page = getPage();
+            page.customers = [];
+            page.products = [];
+            sync(); render(); closeModal('modalReset'); 
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // --- TÍNH NĂNG XUẤT ẢNH ---
         function enterCleanMode() {
             const tableClone = document.getElementById('orderTable').cloneNode(true);
             tableClone.querySelectorAll('input').forEach(i => {
-                const val = i.value, parent = i.parentNode;
-                if (parseFloat(val) > 0) {
+                const val = parseFloat(i.value.replace(/,/g, '.'));
+                const parent = i.parentNode;
+                if (!isNaN(val) && val > 0) {
                     const div = document.createElement('div');
                     div.innerText = val;
-                    div.style.cssText = "width:28px;height:28px;color:#3b82f6;border:0.8px solid #d4af37;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;margin:0 auto;line-height:1;";
+                    div.style.cssText = "font-weight:800; color:var(--primary);";
                     parent.replaceChild(div, i);
-                } else { parent.innerText = "-"; parent.style.color = "#333"; }
+                } else { parent.innerText = "-"; parent.style.color = "var(--text-muted)"; }
             });
             const cleanView = document.getElementById('cleanView'), cleanWrapper = document.getElementById('cleanWrapper'), contentArea = document.getElementById('cleanContentArea');
             cleanView.innerHTML = ""; cleanView.appendChild(tableClone);
             document.getElementById('cleanOverlay').style.display = 'flex';
+            
             setTimeout(() => {
                 tableClone.style.width = "max-content"; tableClone.style.display = "table";
                 const tw = tableClone.offsetWidth, th = tableClone.offsetHeight;
-                const sw = contentArea.clientWidth - 16, sh = contentArea.clientHeight - 16;
+                const sw = contentArea.clientWidth - 20, sh = contentArea.clientHeight - 20;
                 let scale = Math.min(sw / tw, sh / th);
                 if (scale > 1) scale = 1;
                 cleanWrapper.style.transform = `scale(${scale})`;
-            }, 100);
+            }, 50);
         }
 
         function exitCleanMode() { document.getElementById('cleanOverlay').style.display = 'none'; }
 
         function buildCaptureHTML() {
+            const page = getPage();
             const now = new Date();
             const dateStr = now.toLocaleDateString('vi-VN', {weekday:'long', year:'numeric', month:'2-digit', day:'2-digit'});
-            const timeStr = now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
-
-            let colSums = new Array(appState.products.length).fill(0), grandTotal = 0;
-            const rowTotals = appState.customers.map(c => {
+            
+            let colSums = new Array(page.products.length).fill(0), grandTotal = 0;
+            const rowTotals = page.customers.map(c => {
                 let rS = 0;
-                appState.products.forEach((p, pi) => { const q = c.qtys[pi]||0; colSums[pi] += q; rS += q * p.price; });
+                page.products.forEach((p, pi) => { const q = c.qtys[pi]||0; colSums[pi] += q; rS += q * p.price; });
                 grandTotal += rS; return rS;
             });
 
-            let html = `<div style="background:#050505;display:inline-block;">
+            let html = `<div class="cap-wrap">
                 <div class="cap-header-wrap">
                     <div class="cap-title">ĐƠN HÀNG</div>
-                    <div class="cap-subtitle">— ANH TẤN —</div>
-                    <div class="cap-date">${dateStr} · ${timeStr}</div>
+                    <div class="cap-subtitle">ANH TẤN - 0777101102</div>
+                    <div class="cap-page-badge">${page.name.toUpperCase()}</div>
+                    <div class="cap-date">Chụp lúc: ${now.toLocaleTimeString('vi-VN')} - ${dateStr}</div>
                 </div>
                 <table><thead><tr>
                     <th class="cap-name-col">KHÁCH HÀNG</th>`;
 
-            appState.products.forEach(p => {
-                html += `<th style="background:#000!important;color:#ffffff;font-weight:900;font-size:10px;padding:8px 8px;text-align:center;border:0.8px solid rgba(212,175,55,0.25);">${p.name}<br><span style="font-size:8px;opacity:0.6;font-weight:500;">${p.price.toLocaleString()}</span></th>`;
+            page.products.forEach(p => {
+                let isLong = p.name.length > 10;
+                let thStyle = isLong 
+                    ? `style="white-space: normal; min-width: 85px; max-width: 100px; line-height: 1.35;"` 
+                    : `style="white-space: nowrap; min-width: 70px;"`;
+                let nameSize = isLong ? '8.5px' : '9.5px';
+                    
+                html += `<th ${thStyle}>
+                    <div style="font-size:${nameSize}; font-weight:600; color:#64748b;">${p.name}</div>
+                    <div style="font-weight:700; opacity:0.9; margin-top:4px; font-size:9px; color:#1e293b;">${p.price.toLocaleString()}</div>
+                </th>`;
             });
 
             html += `<th class="cap-total-col">TỔNG</th></tr></thead><tbody>`;
 
-            appState.customers.forEach((c, ci) => {
-                const isPaid = c.paid;
-                const rowBg = isPaid ? 'background:rgba(16,185,129,0.1)!important;' : '';
-                html += `<tr class="${isPaid?'cap-paid-row':''}">
-                    <td class="cap-name-col" style="${isPaid?'color:#10b981!important;':''}">${c.name}</td>`;
+            page.customers.forEach((c, ci) => {
+                let rCls = c.status === 1 ? 'cap-row-yellow' : (c.status === 2 ? 'cap-row-green' : '');
+                
+                html += `<tr class="${rCls}">
+                    <td class="cap-name-col"><span style="color:#0984e3; font-weight:800; margin-right:4px;">${ci + 1}.</span><span style="font-weight:700;">${c.name}</span></td>`;
 
-                appState.products.forEach((p, pi) => {
+                page.products.forEach((p, pi) => {
                     const q = c.qtys[pi]||0;
-                    if (q > 0) {
-                        html += `<td style="font-size:12px;font-weight:700;color:#3b82f6;text-align:center;padding:8px 6px;border:0.8px solid rgba(212,175,55,0.25);${rowBg}">${q}</td>`;
-                    } else {
-                        html += `<td style="color:#333;font-size:11px;text-align:center;padding:8px 6px;border:0.8px solid rgba(212,175,55,0.25);${rowBg}">—</td>`;
-                    }
+                    if (q > 0) html += `<td style="font-weight:800; color:#0369a1;">${q}</td>`;
+                    else html += `<td style="color:#94a3b8;">-</td>`;
                 });
 
-                html += `<td class="cap-total-col" style="${isPaid?'background:#10b981!important;color:#000!important;':''}">${rowTotals[ci].toLocaleString()}</td></tr>`;
+                html += `<td class="cap-total-col">${rowTotals[ci].toLocaleString()}</td></tr>`;
             });
 
             html += `</tbody><tfoot><tr><td class="cap-name-col">TỔNG CỘNG</td>`;
-            colSums.forEach(s => {
-                html += `<td style="color:#d4af37;font-weight:900;font-size:13px;text-align:center;padding:8px 6px;background:#0a0a0a!important;border:0.8px solid rgba(212,175,55,0.25);">${s.toLocaleString()}</td>`;
-            });
-            html += `<td class="cap-total-col" style="color:#d4af37;">${grandTotal.toLocaleString()}</td>
+            colSums.forEach(s => { html += `<td>${s.toLocaleString()}</td>`; });
+            html += `<td class="cap-total-col">${grandTotal.toLocaleString()}</td>
                 </tr></tfoot></table>
-                <div class="cap-footer-bar">ANH TẤN · ĐƠN HÀNG</div>
             </div>`;
             return html;
         }
@@ -494,30 +832,18 @@
             setTimeout(() => {
                 const targetEl = ct.firstElementChild;
                 html2canvas(targetEl, {
-                    backgroundColor: '#050505',
+                    backgroundColor: '#ffffff',
                     scale: 3,
                     useCORS: true,
-                    logging: false,
-                    allowTaint: true,
+                    logging: false
                 }).then(canvas => {
                     loadingEl.style.display = 'none';
-                    const now = new Date();
-                    const fn = 'Don-Hang-VoTan-' + now.getFullYear() +
-                        String(now.getMonth()+1).padStart(2,'0') +
-                        String(now.getDate()).padStart(2,'0') + '-' +
-                        String(now.getHours()).padStart(2,'0') +
-                        String(now.getMinutes()).padStart(2,'0') + '.png';
-
-                    const base64 = canvas.toDataURL('image/png');
+                    const fn = 'Don-Hang-' + getPage().name.replace(/\s+/g,'-') + '.png';
 
                     if (window.AndroidSaveImage) {
-                        try {
-                            window.AndroidSaveImage.saveBase64Image(base64, fn);
-                        } catch(e) {
-                            notify('❌ Lỗi lưu ảnh: ' + e.message, 3000);
-                        }
-                        ct.style.display = 'none';
-                        return;
+                        try { window.AndroidSaveImage.saveBase64Image(canvas.toDataURL('image/png'), fn); } 
+                        catch(e) { notify('❌ Lỗi: ' + e.message, 3000); }
+                        ct.style.display = 'none'; return;
                     }
 
                     canvas.toBlob(blob => {
@@ -526,26 +852,20 @@
                         a.href = url; a.download = fn;
                         document.body.appendChild(a); a.click(); document.body.removeChild(a);
                         setTimeout(() => URL.revokeObjectURL(url), 3000);
-                        notify('✅ ĐÃ LƯU ẢNH THÀNH CÔNG!', 2500);
+                        notify('✅ Đã lưu ảnh!', 2000);
                         ct.style.display = 'none';
                     }, 'image/png');
-
                 }).catch(err => {
-                    loadingEl.style.display = 'none';
-                    ct.style.display = 'none';
-                    notify('❌ Lỗi xuất ảnh. Vui lòng thử lại.', 3000);
+                    loadingEl.style.display = 'none'; ct.style.display = 'none';
+                    notify('❌ Lỗi xuất ảnh.', 3000);
                 });
-            }, 200);
+            }, 300);
         }
-
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; targetPayIndex = null; }
-        function confirmAddK() { const n = document.getElementById('inKName').value.trim().toUpperCase(); if (n) { appState.customers.push({name:n,qtys:new Array(appState.products.length).fill(0),paid:false}); sync(); render(); closeModal('modalKhach'); document.getElementById('inKName').value = ""; } }
-        function confirmAddP() { const n = document.getElementById('inPName').value.trim().toUpperCase(), p = parseInt(document.getElementById('inPPrice').value); if (n && p) { appState.products.push({name:n,price:p}); appState.customers.forEach(c => c.qtys.push(0)); sync(); render(); closeModal('modalHang'); document.getElementById('inPName').value = ""; document.getElementById('inPPrice').value = ""; } }
-        function confirmReset() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
-        function handleGlobalClick(event) {}
 
         window.onload = init;
     </script>
 </body>
 </html>
+
+
+```
