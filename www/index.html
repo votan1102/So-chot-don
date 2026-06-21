@@ -96,7 +96,10 @@
         @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
         .modal-title { color: var(--text-main); text-align: center; margin-bottom: 20px; text-transform: uppercase; font-size: 0.9rem; font-weight: 800; letter-spacing: 1px; }
-        .modal-input { width: 100% !important; height: 44px !important; padding: 0 12px !important; margin-bottom: 12px !important; background: var(--bg-main) !important; border: 1px solid var(--border-strong) !important; color: var(--text-main) !important; border-radius: 8px !important; font-size: 0.8rem !important; font-weight: 600 !important; text-align: center !important; outline: none !important; display: block !important; transition: border-color 0.2s; text-transform: uppercase; }
+        
+        /* Cập nhật chiều cao và line-height để không bị khuất dấu tiếng Việt */
+        .modal-input { width: 100% !important; height: 50px !important; padding: 10px 15px !important; line-height: 1.5 !important; margin-bottom: 12px !important; background: var(--bg-main) !important; border: 1px solid var(--border-strong) !important; color: var(--text-main) !important; border-radius: 8px !important; font-size: 0.85rem !important; font-weight: 600 !important; text-align: center !important; outline: none !important; display: block !important; transition: border-color 0.2s; text-transform: uppercase; }
+        
         .modal-input:focus { border-color: var(--primary) !important; }
         .modal-input::placeholder { font-weight: 400; color: var(--text-muted); opacity: 0.7; text-transform: none; }
         
@@ -129,25 +132,26 @@
         
         .editable { cursor: pointer; }
 
-        /* Hidden Capture Target - TỐI ƯU HÓA THEO YÊU CẦU */
+        /* Hidden Capture Target */
         #captureTarget { position: fixed; top: 0; left: 0; opacity: 0; pointer-events: none; z-index: -1; background: #ffffff; display: none; }
         #captureTarget .cap-wrap { background: #ffffff; display: inline-block; padding: 20px 25px; font-family: 'Inter', sans-serif; }
         #captureTarget table { border-collapse: collapse; width: max-content; }
-        #captureTarget th, #captureTarget td { border: 1px solid #cbd5e1; padding: 10px 8px; text-align: center; }
+        #captureTarget th, #captureTarget td { border: 1px solid #cbd5e1; padding: 10px 8px; text-align: center; position: static !important; z-index: auto !important;} /* Cập nhật để bỏ tính năng dính đè chéo */
         #captureTarget .cap-header-wrap { text-align: center; margin-bottom: 20px; }
         #captureTarget .cap-title { color: #0f172a; font-size: 22px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; }
         #captureTarget .cap-subtitle { color: #475569; font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-top: 6px; }
-        
-        /* Chỉnh sửa 1: Thu gọn cap-page-badge */
         #captureTarget .cap-page-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 8px; font-size: 9px; font-weight: 700; margin-top: 8px; }
-        
         #captureTarget .cap-date { color: #94a3b8; font-size: 10px; margin-top: 6px; font-weight: 500; }
-        #captureTarget thead th { background: #f1f5f9; color: #1e293b; font-weight: 700; font-size: 11px; vertical-align: bottom; }
+        
+        #captureTarget thead th { background: #f1f5f9; color: #1e293b; font-weight: 700; font-size: 11px; vertical-align: bottom; position: static !important; }
         #captureTarget .cap-name-col { text-align: left; padding-left: 14px; font-weight: 700; font-size: 12.5px; min-width: 120px; white-space: nowrap; color: #1e293b;}
         #captureTarget .cap-total-col { color: #e11d48; font-weight: 800; font-size: 14px; white-space: nowrap; }
         #captureTarget .cap-row-yellow td { background: #fef08a !important; }
         #captureTarget .cap-row-green td { background: #bbf7d0 !important; }
-        #captureTarget tfoot td { background: #f8fafc; font-weight: 800; font-size: 13.5px; color: #0f172a; }
+        
+        /* Loại bỏ hoàn toàn sticky ở khu vực xuất ảnh để tránh lỗi đè dòng */
+        #captureTarget tfoot { position: static !important; box-shadow: none !important; }
+        #captureTarget tfoot td { background: #f8fafc; font-weight: 800; font-size: 13.5px; color: #0f172a; position: static !important; z-index: auto !important; border-top: 2px solid #cbd5e1;}
     </style>
 </head>
 <body>
@@ -172,7 +176,7 @@
 
         <div class="control-panel">
             <div class="action-row">
-                <button class="btn-tool" onclick="undo()" id="btnUndo">
+                <button class="btn-tool" onclick="promptUndo()" id="btnUndo">
                     <svg style="width:16px;height:16px" viewBox="0 0 24 24"><path fill="currentColor" d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" /></svg>
                     HOÀN TÁC
                 </button>
@@ -282,6 +286,17 @@
         </div>
     </div>
 
+    <div class="modal" id="modalConfirmUndo" style="z-index: 7000;">
+        <div class="modal-box">
+            <h3 class="modal-title" style="color:var(--warning); margin-bottom: 10px;">XÁC NHẬN HOÀN TÁC</h3>
+            <p style="text-align:center;color:var(--text-muted);font-size:0.85rem;margin-bottom:20px;line-height:1.4;">Bạn có muốn khôi phục lại thao tác vừa thay đổi không?</p>
+            <div class="modal-btn-group" style="margin-top: 15px;">
+                <button class="btn-cancel-box" onclick="closeModal('modalConfirmUndo')">HỦY BỎ</button>
+                <button class="btn-confirm" style="background:var(--text-main);" onclick="executeUndo()">QUAY LẠI</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- Xử lý vuốt trên mobile ---
         let touchStartY = 0;
@@ -310,28 +325,33 @@
             return appState.pages.find(p => p.id === appState.activePageId) || appState.pages[0];
         }
 
-        // --- ÂM THANH ---
-        function playVictoryChime() {
-            try {
-                const AC = window.AudioContext || window.webkitAudioContext;
-                if (!AC) return; const ctx = new AC();
-                const osc1 = ctx.createOscillator(), gain1 = ctx.createGain();
-                osc1.connect(gain1); gain1.connect(ctx.destination);
-                osc1.type = 'sine'; osc1.frequency.setValueAtTime(1050, ctx.currentTime);
-                gain1.gain.setValueAtTime(0.7, ctx.currentTime); gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.2);
-                osc1.start(ctx.currentTime); osc1.stop(ctx.currentTime + 2.2);
-            } catch(e) {}
-        }
-
-        function playTick() {
+        // --- ÂM THANH MỚI (TINH CHỈNH THEO YÊU CẦU) ---
+        function playAlertSound() {
+            // Âm thanh báo hiệu nhẹ nhàng (Lần 1 - Vàng)
             try {
                 const AC = window.AudioContext || window.webkitAudioContext;
                 if (!AC) return; const ctx = new AC();
                 const osc = ctx.createOscillator(), gain = ctx.createGain();
                 osc.connect(gain); gain.connect(ctx.destination);
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(600, ctx.currentTime);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.1);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(500, ctx.currentTime);
+                gain.gain.setValueAtTime(0.5, ctx.currentTime); 
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.start(); osc.stop(ctx.currentTime + 0.3);
+            } catch(e) {}
+        }
+
+        function playSuccessSound() {
+            // Âm thanh hoàn tất vang và vui tươi hơn (Lần 2 - Xanh)
+            try {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return; const ctx = new AC();
+                const osc = ctx.createOscillator(), gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(800, ctx.currentTime);
+                osc.frequency.setValueAtTime(1200, ctx.currentTime + 0.1); // Vuốt âm thanh lên cao (pitch-bend)
+                gain.gain.setValueAtTime(0.5, ctx.currentTime); 
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                osc.start(); osc.stop(ctx.currentTime + 0.5);
             } catch(e) {}
         }
 
@@ -384,10 +404,9 @@
             updateUndoButton();
         }
 
-        // --- HOÀN TÁC (UNDO) TỐI ƯU HÓA BỘ NHỚ ---
+        // --- HOÀN TÁC (UNDO) ---
         function saveHistory() {
             const currentState = JSON.stringify(appState);
-            // Chỉ thêm vào lịch sử nếu trạng thái này khác với trạng thái lưu gần nhất
             if (historyStack.length === 0 || historyStack[historyStack.length - 1] !== currentState) {
                 historyStack.push(currentState);
                 if (historyStack.length > 20) historyStack.shift(); 
@@ -395,12 +414,18 @@
             }
         }
 
-        function undo() {
+        function promptUndo() {
+            if (historyStack.length > 0) {
+                openModal('modalConfirmUndo');
+            }
+        }
+
+        function executeUndo() {
+            closeModal('modalConfirmUndo');
             if (historyStack.length > 0) {
                 let prevState = historyStack.pop();
                 const currentStateStr = JSON.stringify(appState);
                 
-                // Loại bỏ các trạng thái trùng lặp với hiện tại (trường hợp click focus nhưng không sửa đổi)
                 while (prevState === currentStateStr && historyStack.length > 0) {
                     prevState = historyStack.pop();
                 }
@@ -540,7 +565,6 @@
 
                 let displayName = `<span style="color:var(--primary); font-weight:800; opacity:0.85; margin-right:4px;">${ci + 1}.</span><span style="font-weight:700;">${c.name}</span>`;
 
-                // Cập nhật onfocus gọi saveHistory() để lưu lại trạng thái trước khi nhập
                 let rC = `<tr class="${rowCls}"><td class="sticky-col editable" onclick="detectDoubleTap(event,'customer',${ci})">${displayName}</td>`;
                 page.products.forEach((p, pi) => {
                     const q = c.qtys[pi] || 0;
@@ -598,7 +622,7 @@
             const gt = document.getElementById('g-t'); if (gt) gt.innerText = grand.toLocaleString();
         }
 
-        // --- TRI-STATE CLICK (CHU KỲ TRẠNG THÁI) ---
+        // --- TRI-STATE CLICK ---
         function cyclePayStatus(ci) {
             saveHistory();
             const page = getPage();
@@ -608,13 +632,13 @@
             s = (s + 1) % 3; 
             c.status = s;
             
-            if (s === 1) { playTick(); } 
-            else if (s === 2) { playVictoryChime(); } 
+            if (s === 1) { playAlertSound(); } 
+            else if (s === 2) { playSuccessSound(); } 
             
             sync(); render();
         }
 
-        // --- EDIT VÀ DELETE (DOUBLE TAP HÀNG & KHÁCH) ---
+        // --- EDIT VÀ DELETE ---
         function detectDoubleTap(e, type, index) {
             const now = Date.now();
             if (now - lastTap < 300 && now - lastTap > 0) {
@@ -760,14 +784,11 @@
 
         function exitCleanMode() { document.getElementById('cleanOverlay').style.display = 'none'; }
 
-        /* --- TÍNH NĂNG CHỤP ẢNH (ĐÃ CHỈNH SỬA) --- */
         function buildCaptureHTML() {
             const page = getPage();
             const now = new Date();
-            
-            // Chỉnh sửa 2: Định dạng thời gian và ngày (Dùng en-GB để ra định dạng Sunday, 21/06/2026)
             const dateStr = now.toLocaleDateString('en-GB', {weekday:'long', year:'numeric', month:'2-digit', day:'2-digit'});
-            const timeStr = now.toLocaleTimeString('vi-VN'); // Giữ thời gian 24h
+            const timeStr = now.toLocaleTimeString('vi-VN'); 
             
             let colSums = new Array(page.products.length).fill(0), grandTotal = 0;
             const rowTotals = page.customers.map(c => {
