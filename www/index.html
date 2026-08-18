@@ -87,8 +87,8 @@
         .row-green .total-cell { background-color: var(--success) !important; color: #fff !important; }
 
         tfoot { position: sticky; bottom: 0; z-index: 2000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-        .grand-total-row td { background-color: #f1f2f6 !important; font-weight: 800 !important; color: var(--text-main); font-size: 14.5px !important; height: 50px; border-top: 2px solid var(--border-strong) !important; }
-        .grand-total-val { position: sticky; right: 0; z-index: 2600; background-color: #f1f2f6 !important; border-left: 2px solid var(--border-strong) !important; text-align: right; padding-right: 15px !important; color: var(--danger) !important; }
+        .grand-total-row td { background-color: #f1f2f6 !important; font-weight: 900 !important; color: var(--text-main); font-size: 16px !important; height: 50px; border-top: 2px solid var(--border-strong) !important; }
+        .grand-total-val { position: sticky; right: 0; z-index: 2600; background-color: #f1f2f6 !important; border-left: 2px solid var(--border-strong) !important; text-align: right; padding-right: 15px !important; color: var(--danger) !important; font-size: 18px !important; }
 
         /* MODALS */
         .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; z-index: 6000; padding: 0 15px; }
@@ -123,6 +123,8 @@
         .modal-input:focus { border-color: var(--primary) !important; }
         .modal-input::placeholder { font-weight: 400; color: var(--text-muted); opacity: 0.7; text-transform: none; }
         #inKName { font-size: 0.62rem !important; }
+        #inPName { font-weight: 800 !important; color: #0052cc !important; font-size: 0.8rem !important; }
+        #inPPrice { font-weight: 800 !important; color: var(--text-main) !important; font-size: 0.8rem !important; }
         
         .modal-btn-group { display: flex; gap: 10px; margin-top: 5px; }
         .btn-confirm { background: var(--text-main); color: var(--surface); flex: 2; padding: 14px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
@@ -172,7 +174,8 @@
         
         /* Loại bỏ hoàn toàn sticky ở khu vực xuất ảnh để tránh lỗi đè dòng */
         #captureTarget tfoot { position: static !important; box-shadow: none !important; }
-        #captureTarget tfoot td { background: #f8fafc; font-weight: 800; font-size: 13.5px; color: #0f172a; position: static !important; z-index: auto !important; border-top: 2px solid #cbd5e1;}
+        #captureTarget tfoot td { background: #f8fafc; font-weight: 900; font-size: 15px; color: #0f172a; position: static !important; z-index: auto !important; border-top: 2px solid #cbd5e1;}
+        #captureTarget tfoot .cap-total-col { font-size: 17px !important; font-weight: 900 !important; }
     </style>
 </head>
 <body>
@@ -201,11 +204,11 @@
                     <svg style="width:16px;height:16px" viewBox="0 0 24 24"><path fill="currentColor" d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" /></svg>
                     HOÀN TÁC
                 </button>
-                <button class="btn-tool" onclick="openModal('modalReset')">
+                <button class="btn-tool" style="color:var(--danger); border-color:var(--danger);" onclick="openModal('modalReset')">
                     <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
                     DỌN DẸP
                 </button>
-                <button class="btn-tool" style="border-color:var(--text-main); color:var(--text-main);" onclick="enterCleanMode()">
+                <button class="btn-tool" style="color:var(--success); border-color:var(--success);" onclick="enterCleanMode()">
                     <svg style="width:16px;height:16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>
                     CHỤP ĐƠN
                 </button>
@@ -566,12 +569,12 @@
                     ? `style="white-space: normal; min-width: 90px; max-width: 110px; line-height: 1.35; padding: 8px 4px;"` 
                     : `style="white-space: nowrap; min-width: 80px; padding: 8px 4px;"`;
                 
-                let nameSize = isLong ? '9px' : '10px';
+                let nameSize = isLong ? '10px' : '11px';
 
                 hM += `<th class="editable" ${thStyle} onclick="detectDoubleTap(event,'product',${pi})">
                     <div style="display:flex; flex-direction:column; justify-content:space-between; height:100%; gap:4px;">
-                        <span style="font-size:${nameSize}; font-weight:600; color:var(--text-muted);">${p.name}</span>
-                        <span style="font-size:9.5px; opacity:0.9; font-weight:700; color:var(--text-main);">${p.price.toLocaleString()}</span>
+                        <span style="font-size:${nameSize}; font-weight:800; color:#0052cc;">${p.name}</span>
+                        <span style="font-size:10px; font-weight:900; color:var(--text-main);">${p.price.toLocaleString()}</span>
                     </div>
                 </th>`;
             });
@@ -833,11 +836,11 @@
                 let thStyle = isLong 
                     ? `style="white-space: normal; min-width: 85px; max-width: 100px; line-height: 1.35;"` 
                     : `style="white-space: nowrap; min-width: 70px;"`;
-                let nameSize = isLong ? '8.5px' : '9.5px';
+                let nameSize = isLong ? '9.5px' : '10.5px';
                     
                 html += `<th ${thStyle}>
-                    <div style="font-size:${nameSize}; font-weight:600; color:#64748b;">${p.name}</div>
-                    <div style="font-weight:700; opacity:0.9; margin-top:4px; font-size:9px; color:#1e293b;">${p.price.toLocaleString()}</div>
+                    <div style="font-size:${nameSize}; font-weight:800; color:#0052cc;">${p.name}</div>
+                    <div style="font-weight:900; margin-top:4px; font-size:9.5px; color:#1e293b;">${p.price.toLocaleString()}</div>
                 </th>`;
             });
 
@@ -912,4 +915,8 @@
     </script>
 </body>
 </html>
- 
+
+
+
+
+
